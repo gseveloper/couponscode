@@ -1,0 +1,675 @@
+Last login: Mon Nov  2 22:31:49 on ttys000
+/Users/sajju/Library/Application\ Support/Local/ssh-entry/un2bfU_3V.sh
+sajju@Muhammads-MacBook-Air ~ % /Users/sajju/Library/Application\ Support/Local/ssh-entry/un2bfU_3V.sh
+-n -e 
+Setting Local environment variables...
+----
+WP-CLI:   WP-CLI 2.12.0
+PHP version 8.2.29 (/Users/sajju/Library/Application Support/Local/lightning-services/php-8.2.29+0/bin/darwin-arm64/bin/php)
+Run the "diagnose" command to get more detailed diagnostics output.
+Composer: 2.8.6 2025-02-25
+PHP:      8.2.29
+MySQL:    mysql  Ver 8.4.0 for macos14 on arm64 (MySQL Community Server - GPL)
+----
+Launching shell: /bin/zsh ...
+sajju@Muhammads-MacBook-Air public % >....                                                                                                                                                                     
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.logo-badge {
+  background: var(--accent-neon);
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 800;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.search-trigger-btn {
+  background: var(--bg-inset);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.search-trigger-btn:hover { color: #fff; border-color: var(--accent-neon); }
+
+/* Hero Section */
+.hero-sec {
+  padding: 60px 0 40px;
+  text-align: center;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-neon);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-neon);
+}
+.hero-title {
+  font
+heredoc> 
+sajju@Muhammads-MacBook-Air public % >....                                                                                                                                                                     
+  cursor: pointer;
+}
+.modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Live Search Modal */
+.live-search-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 10000;
+  padding: 60px 16px 20px;
+}
+.live-search-container {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.live-search-input-wrap {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+.live-search-input-wrap input {
+  width: 100%;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-color);
+  padding: 12px 18px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+}
+.live-search-results {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px 16px;
+}
+.live-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #fff;
+}
+.live-search-item:hover { background: var(--bg-inset); }
+EOF
+zsh: command not found: #
+sajju@Muhammads-MacBook-Air simplycodes-pk % >....                                                                                                                                                             
+  cursor: pointer;
+}
+.modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Live Search Modal */
+.live-search-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 10000;
+  padding: 60px 16px 20px;
+}
+.live-search-container {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.live-search-input-wrap {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+.live-search-input-wrap input {
+  width: 100%;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-color);
+  padding: 12px 18px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+}
+.live-search-results {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px 16px;
+}
+.live-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #fff;
+}
+.live-search-item:hover { background: var(--bg-inset); }
+EOF
+zsh: command not found: #
+sajju@Muhammads-MacBook-Air simplycodes-pk % sajju@Muhammads-MacBook-Air public %
+zsh: command not found: sajju@Muhammads-MacBook-Air
+sajju@Muhammads-MacBook-Air simplycodes-pk % >....                                                                                                                                                             
+  cursor: pointer;
+}
+.modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Live Search Modal */
+.live-search-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 10000;
+  padding: 60px 16px 20px;
+}
+.live-search-container {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.live-search-input-wrap {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+.live-search-input-wrap input {
+  width: 100%;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-color);
+  padding: 12px 18px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+}
+.live-search-results {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px 16px;
+}
+.live-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #fff;
+}
+.live-search-item:hover { background: var(--bg-inset); }
+EOF
+zsh: command not found: #
+sajju@Muhammads-MacBook-Air simplycodes-pk % >....                                                                                                                                                             
+        $count = count(get_posts([
+            'post_type' => 'coupon',
+            'meta_key' => '_coupon_store_id',
+            'meta_value' => $store->ID,
+            'posts_per_page' => -1
+        ]));
+
+        $thumb = get_the_post_thumbnail_url($store->ID, 'thumbnail') ?: 'https://via.placeholder.com/48?text=Store';
+
+        $results[] = [
+            'type' => 'Store',
+            'title' => $store->post_title,
+            'url' => get_permalink($store->ID),
+            'thumb' => $thumb,
+            'badge' => $count . ' codes'
+        ];
+    }
+
+    wp_send_json_success($results);
+}
+add_action('wp_ajax_sc_search', 'simplycodes_ajax_search');
+add_action('wp_ajax_nopriv_sc_search', 'simplycodes_ajax_search');
+
+// 4. AJAX Front-End User Coupon Submission
+function simplycodes_ajax_submit_coupon() {
+    check_ajax_referer('sc_nonce', 'nonce');
+
+    $store_id = intval($_POST['store_id'] ?? 0);
+    $code     = sanitize_text_field($_POST['code'] ?? '');
+    $discount = sanitize_text_field($_POST['discount'] ?? '');
+    $desc     = sanitize_textarea_field($_POST['description'] ?? '');
+
+    if (!$store_id || empty($code)) {
+        wp_send_json_error('Store and Coupon Code are required.');
+    }
+
+    $post_id = wp_insert_post([
+        'post_title'   => $discount ? $discount . ' - ' . $code : 'Promo Code: ' . $code,
+        'post_content' => $desc,
+        'post_status'  => 'draft', // Admin can review before publishing
+        'post_type'    => 'coupon'
+    ]);
+
+    if (!is_wp_error($post_id)) {
+        update_post_meta($post_id, '_coupon_store_id', $store_id);
+        update_post_meta($post_id, '_coupon_code', $code);
+        update_post_meta($post_id, '_coupon_discount', $discount);
+        update_post_meta($post_id, '_coupon_health', 90);
+        update_post_meta($post_id, '_coupon_type', 'code');
+        update_post_meta($post_id, '_coupon_verified', 'no');
+
+        wp_send_json_success('Thank you! Your coupon has been submitted for verification.');
+    } else {
+        wp_send_json_error('Error submitting code.');
+    }
+}
+add_action('wp_ajax_sc_submit_coupon', 'simplycodes_ajax_submit_coupon');
+add_action('wp_ajax_nopriv_sc_submit_coupon', 'simplycodes_ajax_submit_coupon');
+EOF
+sajju@Muhammads-MacBook-Air simplycodes-pk % >....                                                                                                                                                             
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<header class="site-header">
+    <div class="container header-inner">
+        <a href="<?php echo home_url('/'); ?>" class="logo-wrap">
+            <span style="color:#03FF88;">SimplyCodes</span><span style="color:#fff;">PK</span>
+            <span class="logo-badge">VERIFIED</span>
+        </a>
+        <div class="header-actions">
+            <button class="search-trigger-btn" id="openSearchBtn">
+                <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"/></svg>
+                Search Daraz, Foodpanda, Khaadi...
+            </button>
+        </div>
+    </div>
+</header>
+EOF
+
+# 2. footer.php
+cat << 'EOF' > footer.php
+<footer style="background: #101214; border-top: 1px solid #2F3032; padding: 40px 0; margin-top: 60px; color: #A3A6A8; font-size: 14px;">
+    <div class="container" style="text-align: center;">
+        <p style="margin-bottom: 8px;"><strong>SimplyCodes PK</strong> — The Real-Time Coupon Verification Engine for Pakistan.</p>
+        <p>© <?php echo date('Y'); ?> SimplyCodes. Tested by community checkouts.</p>
+    </div>
+</footer>
+
+<!-- Copy / Reveal Modal -->
+<div class="sc-modal-overlay" id="copyModal">
+    <div class="sc-modal-box">
+        <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+        <div style="font-size: 13px; color: #03FF88; font-weight: 700; margin-bottom: 6px;">COUPON VERIFIED</div>
+        <h3 id="modalOfferTitle" style="font-size: 20px; font-weight: 700; color: #fff;"></h3>
+        <p style="font-size: 13px; color: #A3A6A8; margin-top: 4px;">Code copied to clipboard! Paste it at checkout.</p>
+        <div class="modal-code-display" id="modalCodeDisplay">CODE</div>
+        <a id="modalStoreLink" href="#" target="_blank" rel="noopener noreferrer" style="display: block; background: #03FF88; color: #000; font-weight: 700; padding: 12px; border-radius: 10px; margin-top: 14px;">Continue to Store &rarr;</a>
+    </div>
+</div>
+
+<!-- Instant AJAX Search Modal -->
+<div class="live-search-modal" id="searchModal">
+    <div class="live-search-container">
+        <div class="live-search-input-wrap">
+            <input type="text" id="liveSearchInput" placeholder="Search Pakistani stores (e.g. Daraz, PriceOye, Outfitters)..." autocomplete="off">
+        </div>
+        <div class="live-search-results" id="liveSearchResults">
+            <div style="color:#A3A6A8; font-size: 14px; text-align: center; padding: 20px;">Type 2 or more letters to search live...</div>
+        </div>
+    </div>
+</div>
+
+<?php wp_footer(); ?>
+</body>
+</html>
+EOF
+zsh: command not found: #
+zsh: command not found: #
+sajju@Muhammads-MacBook-Air simplycodes-pk % >....                                                                                                                                                             
+                    .then(res => {
+                        if (res.success && res.data.length > 0) {
+                            searchResults.innerHTML = res.data.map(item => `
+                                <a href="${item.url}" class="live-search-item">
+                                    <div style="display:flex; align-items:center; gap:10px;">
+                                        <img src="${item.thumb}" width="36" height="36" style="border-radius:6px; object-fit:contain; background:#fff; padding:2px;">
+                                        <strong>${item.title}</strong>
+                                    </div>
+                                    <span style="font-size:12px; background:var(--border-color); padding:3px 8px; border-radius:12px; color:var(--accent-neon);">${item.badge}</span>
+                                </a>
+                            `).join('');
+                        } else {
+                            searchResults.innerHTML = '<div style="color:#A3A6A8; font-size:14px; text-align:center; padding:20px;">No stores found matching your search.</div>';
+                        }
+                    });
+            }, 250);
+        });
+    }
+
+    // 3. User Submit Coupon AJAX
+    const submitForm = document.getElementById('submitCouponForm');
+    if (submitForm) {
+        submitForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitCodeBtn');
+            const msg = document.getElementById('submitMsg');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            const formData = new FormData(this);
+            formData.append('action', 'sc_submit_coupon');
+            formData.append('nonce', scData.nonce);
+
+            fetch(scData.ajaxurl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(res => {
+                btn.disabled = false;
+                btn.textContent = 'Submit Coupon';
+                msg.style.display = 'block';
+                if (res.success) {
+                    msg.style.color = '#03FF88';
+                    msg.textContent = res.data;
+                    submitForm.reset();
+                } else {
+                    msg.style.color = '#FF4B33';
+                    msg.textContent = res.data || 'Failed to submit.';
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.textContent = 'Submit Coupon';
+            });
+        });
+    }
+});
+EOF
+zsh: parse error near `)'
+sajju@Muhammads-MacBook-Air simplycodes-pk % # Return to the WordPress root directory
+cd ../../..
+
+# 1. Activate your custom theme
+wp theme activate simplycodes-pk
+
+# 2. Add Pakistani Stores (Daraz, Foodpanda, Outfitters, PriceOye)
+DARAZ_ID=$(wp post create --post_type=store --post_title="Daraz PK" --post_status=publish --post_content="Daraz is Pakistan's largest online shopping platform offering millions of products across electronics, fashion, groceries, and home appliances. Use verified Daraz vouchers for extra discounts on bank cards and mega 11.11 / 12.12 sales." --porcelain)
+wp post meta set $DARAZ_ID _store_website "https://www.daraz.pk"
+wp post meta set $DARAZ_ID _store_rating "4.9"
+
+FP_ID=$(wp post create --post_type=store --post_title="Foodpanda" --post_status=publish --post_content="Foodpanda Pakistan delivers food, pandamart groceries, and daily essentials across Karachi, Lahore, Islamabad, and all major cities. Enjoy promo codes for free delivery and restaurant discounts." --porcelain)
+wp post meta set $FP_ID _store_website "https://www.foodpanda.pk"
+wp post meta set $FP_ID _store_rating "4.8"
+
+PO_ID=$(wp post create --post_type=store --post_title="PriceOye" --post_status=publish --post_content="PriceOye is Pakistan's leading electronics and smartphone retailer with authentic manufacturer warranties and verified price drops." --porcelain)
+wp post meta set $PO_ID _store_website "https://priceoye.pk"
+wp post meta set $PO_ID _store_rating "4.7"
+
+OUT_ID=$(wp post create --post_type=store --post_title="Outfitters" --post_status=publish --post_content="Outfitters is a premier Pakistani fast-fashion brand delivering trendy street apparel, winter jackets, t-shirts, and accessories." --porcelain)
+wp post meta set $OUT_ID _store_website "https://outfitters.com.pk"
+wp post meta set $OUT_ID _store_rating "4.8"
+
+# 3. Add Verified Coupons linked to these stores
+C1=$(wp post create --post_type=coupon --post_title="Rs. 500 OFF on Entire Order (Daraz PK)" --post_status=publish --post_content="Valid on cart spend of Rs. 3,000 or more with all payment methods." --porcelain)
+wp post meta set $C1 _coupon_store_id $DARAZ_ID
+wp post meta set $C1 _coupon_code "DARAZSAVE500"
+wp post meta set $C1 _coupon_discount "Rs. 500 OFF"
+wp post meta set $C1 _coupon_aff_url "https://www.daraz.pk"
+wp post meta set $C1 _coupon_health 98
+wp post meta set $C1 _coupon_type "code"
+wp post meta set $C1 _coupon_verified "yes"
+
+C2=$(wp post create --post_type=coupon --post_title="Free Delivery on First 3 Orders (Foodpanda)" --post_status=publish --post_content="Valid for new and returning accounts on minimum order of Rs. 600." --porcelain)
+wp post meta set $C2 _coupon_store_id $FP_ID
+wp post meta set $C2 _coupon_code "PANDAFREE"
+wp post meta set $C2 _coupon_discount "FREE SHIP"
+wp post meta set $C2 _coupon_aff_url "https://www.foodpanda.pk"
+wp post meta set $C2 _coupon_health 96
+wp post meta set $C2 _coupon_type "code"
+wp post meta set $C2 _coupon_verified "yes"
+
+C3=$(wp post create --post_type=coupon --post_title="20% OFF Entire Winter & Summer Collection" --post_status=publish --post_content="Applicable sitewide on Outfitters Pakistan online store." --porcelain)
+wp post meta set $C3 _coupon_store_id $OUT_ID
+wp post meta set $C3 _coupon_code "OUTFIT20"
+wp post meta set $C3 _coupon_discount "20% OFF"
+wp post meta set $C3 _coupon_aff_url "https://outfitters.com.pk"
+wp post meta set $C3 _coupon_health 95
+wp post meta set $C3 _coupon_type "code"
+wp post meta set $C3 _coupon_verified "yes"
+
+# Flush rewrite rules so /store/ and /coupons/ URLs work immediately
+wp rewrite flush
+zsh: command not found: #
+zsh: command not found: #
+Error: Template is missing. Standalone themes need to have a <code>templates/index.html</code> or <code>index.php</code> template file. <a href="https://developer.wordpress.org/themes/advanced-topics/child-themes/">Child themes</a> need to have a <code>Template</code> header in the <code>style.css</code> stylesheet.
+zsh: number expected
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+zsh: command not found: #
+Success: Updated custom field '_coupon_store_id'.
+Success: Updated custom field '_coupon_code'.
+Success: Updated custom field '_coupon_discount'.
+Success: Updated custom field '_coupon_aff_url'.
+Success: Updated custom field '_coupon_health'.
+Success: Updated custom field '_coupon_type'.
+Success: Updated custom field '_coupon_verified'.
+Success: Updated custom field '_coupon_store_id'.
+Success: Updated custom field '_coupon_code'.
+Success: Updated custom field '_coupon_discount'.
+Success: Updated custom field '_coupon_aff_url'.
+Success: Updated custom field '_coupon_health'.
+Success: Updated custom field '_coupon_type'.
+Success: Updated custom field '_coupon_verified'.
+Success: Updated custom field '_coupon_store_id'.
+Success: Updated custom field '_coupon_code'.
+Success: Updated custom field '_coupon_discount'.
+Success: Updated custom field '_coupon_aff_url'.
+Success: Updated custom field '_coupon_health'.
+Success: Updated custom field '_coupon_type'.
+Success: Updated custom field '_coupon_verified'.
+zsh: command not found: #
+Success: Rewrite rules flushed.
+sajju@Muhammads-MacBook-Air simplycodes-pk % >....                                                                                                                                                             
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.success && res.data.length > 0) {
+                            searchResults.innerHTML = res.data.map(i =>
+                                "<a href=\"" + i.url + "\" class=\"live-search-item\">" +
+                                "<div style=\"display:flex; align-items:center; gap:10px;\">" +
+                                "<img src=\"" + i.thumb + "\" width=\"34\" height=\"34\" style=\"border-radius:6px; object-fit:contain; background:#fff; padding:2px;\">" +
+                                "<strong>" + i.title + "</strong></div>" +
+                                "<span style=\"font-size:12px; background:var(--border-color); padding:3px 8px; border-radius:12px; color:var(--accent-neon);\">" + i.badge + "</span></a>"
+                            ).join("");
+                        } else {
+                            searchResults.innerHTML = "<div style=\"color:#A3A6A8; font-size:14px; text-align:center; padding:20px;\">No stores found.</div>";
+                        }
+                    });
+            }, 250);
+        });
+    }
+
+    // Community Submit Coupon
+    const submitForm = document.getElementById("submitCouponForm");
+    if (submitForm) {
+        submitForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const btn = document.getElementById("submitCodeBtn");
+            const msg = document.getElementById("submitMsg");
+            btn.disabled = true;
+            btn.textContent = "Submitting...";
+
+            const formData = new FormData(this);
+            formData.append("action", "sc_submit_coupon");
+            formData.append("nonce", scData.nonce);
+
+            fetch(scData.ajaxurl, { method: "POST", body: formData })
+                .then(r => r.json())
+                .then(res => {
+                    btn.disabled = false;
+                    btn.textContent = "Submit Code";
+                    msg.style.display = "block";
+                    if (res.success) {
+                        msg.style.color = "#03FF88";
+                        msg.textContent = res.data;
+                        submitForm.reset();
+                    } else {
+                        msg.style.color = "#FF4B33";
+                        msg.textContent = res.data || "Failed to submit.";
+                    }
+                })
+                .catch(() => {
+                    btn.disabled = false;
+                    btn.textContent = "Submit Code";
+                });
+        });
+    }
+});
+JS
+);
+
+echo "SimplyCodes PK theme files successfully generated!\n";
+'
+zsh: parse error near `<'
+sajju@Muhammads-MacBook-Air simplycodes-pk % >....                                                                                                                                                             
+
+OUT=$(wp post create --post_type=store --post_title="Outfitters" --post_status=publish --post_content="Outfitters is a leading youth fashion retailer in Pakistan offering street style, jackets, denim, footwear, and accessories." --porcelain)
+wp post meta set "$OUT" _store_website "https://outfitters.com.pk"
+wp post meta set "$OUT" _store_rating "4.7"
+
+KHD=$(wp post create --post_type=store --post_title="Khaadi" --post_status=publish --post_content="Khaadi is Pakistan's iconic fashion and lifestyle brand known for premium pret, unstitched fabrics, western wear, and fragrance collections." --porcelain)
+wp post meta set "$KHD" _store_website "https://pk.khaadi.com"
+wp post meta set "$KHD" _store_rating "4.9"
+
+# 3. Create Verified Pakistani Coupons
+C1=$(wp post create --post_type=coupon --post_title="Rs. 500 OFF on Orders Above Rs. 3,000 (Daraz PK)" --post_status=publish --post_content="Apply at checkout on Daraz app or web for extra savings." --porcelain)
+wp post meta set "$C1" _coupon_store_id "$DARAZ"
+wp post meta set "$C1" _coupon_code "DARAZ500"
+wp post meta set "$C1" _coupon_discount "Rs. 500 OFF"
+wp post meta set "$C1" _coupon_aff_url "https://www.daraz.pk"
+wp post meta set "$C1" _coupon_health 98
+wp post meta set "$C1" _coupon_type "code"
+
+C2=$(wp post create --post_type=coupon --post_title="Free Delivery on First 3 Orders (Foodpanda)" --post_status=publish --post_content="Valid across restaurants and Pandamart on orders above Rs. 500." --porcelain)
+wp post meta set "$C2" _coupon_store_id "$FP"
+wp post meta set "$C2 _coupon_code" "PANDAFREE"
+wp post meta set "$C2" _coupon_code "PANDAFREE"
+wp post meta set "$C2" _coupon_discount "FREE SHIP"
+wp post meta set "$C2" _coupon_aff_url "https://www.foodpanda.pk"
+wp post meta set "$C2" _coupon_health 97
+wp post meta set "$C2" _coupon_type "code"
+
+C3=$(wp post create --post_type=coupon --post_title="Rs. 1,000 OFF on Smartphones & Accessories" --post_status=publish --post_content="Instant checkout discount on selected mobile phones and gadgets." --porcelain)
+wp post meta set "$C3" _coupon_store_id "$PO"
+wp post meta set "$C3" _coupon_code "PRICE1000"
+wp post meta set "$C3" _coupon_discount "Rs. 1,000 OFF"
+wp post meta set "$C3" _coupon_aff_url "https://priceoye.pk"
+wp post meta set "$C3" _coupon_health 94
+wp post meta set "$C3" _coupon_type "code"
+
+C4=$(wp post create --post_type=coupon --post_title="20% OFF Entire Winter Collection" --post_status=publish --post_content="Valid sitewide across Outfitters jackets, hoodies, and shoes." --porcelain)
+wp post meta set "$C4" _coupon_store_id "$OUT"
+wp post meta set "$C4" _coupon_code "OUTFIT20"
+wp post meta set "$C4" _coupon_discount "20% OFF"
+wp post meta set "$C4" _coupon_aff_url "https://outfitters.com.pk"
+wp post meta set "$C4" _coupon_health 96
+wp post meta set "$C4" _coupon_type "code"
+
+C5=$(wp post create --post_type=coupon --post_title="Flat 15% OFF on New Pret Arrivals (Khaadi)" --post_status=publish --post_content="Valid online only on newly launched ready-to-wear seasonal collections." --porcelain)
+wp post meta set "$C5" _coupon_store_id "$KHD"
+wp post meta set "$C5" _coupon_code "KHAADI15"
+wp post meta set "$C5" _coupon_discount "15% OFF"
+wp post meta set "$C5" _coupon_aff_url "https://pk.khaadi.com"
+wp post meta set "$C5" _coupon_health 99
+wp post meta set "$C5" _coupon_type "code"
+
+# 4. Flush rewrite rules so /store/ links work
+wp rewrite flush
+zsh: command not found: #
+zsh: command not found: #
+Error: Template is missing. Standalone themes need to have a <code>templates/index.html</code> or <code>index.php</code> template file. <a href="https://developer.wordpress.org/themes/advanced-topics/child-themes/">Child themes</a> need to have a <code>Template</code> header in the <code>style.css</code> stylesheet.
+zsh: command not found: #
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+Success: Updated custom field '_store_website'.
+Success: Updated custom field '_store_rating'.
+zsh: command not found: #
+Success: Updated custom field '_coupon_store_id'.
+Success: Updated custom field '_coupon_code'.
+Success: Updated custom field '_coupon_discount'.
+Success: Updated custom field '_coupon_aff_url'.
+Success: Updated custom field '_coupon_health'.
+Success: Updated custom field '_coupon_type'.
+Success: Updated custom field '_coupon_store_id'.
+
+
+
+
+^C
+sajju@Muhammads-MacBook-Air simplycodes-pk % a
+zsh: command not found: a
+sajju@Muhammads-MacBook-Air simplycodes-pk % 

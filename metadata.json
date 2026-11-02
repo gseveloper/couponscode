@@ -1,0 +1,6 @@
+{
+  "name": "couponscode.store - Verified Promo Codes & Discounts",
+  "description": "Find 100% verified coupon codes, store discounts, bank card sales, and Golootlo deals at couponscode.store.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1767 @@
+<body>
+    <a href="#ci-hero-heading" class="skip-link visually-hidden">Skip to main content</a>
+    
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PNK2R3XM" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+
+        <style>
+/* ═══ FIND DEALS DROPDOWN ════════════════════════════════════════════
+   Colors from simplycodes-web design tokens:
+     #2F3032 = bg-bg-surface (gray-800)   — dropdown bg, card bg
+     #212327 = bg-bg-inset  (gray-900)   — hover states
+     #000000 = black                      — right-panel inner container
+     #D8D9DA = text-on-surface-secondary  — code text color
+     #A3A6A8 = text-on-surface-tertiary   — stats / tag borders
+     #4E5255 = accent-secondary (gray-700)— uses section bg
+     #03FF88 = accent-primary             — green (copy btn, health green)
+     #FFBC13 = orange-accent              — health yellow ("Might work")
+     #FF4B33 = raspberry-accent           — health red ("Unverified")
+════════════════════════════════════════════════════════════════════ */
+.find-deals-wrapper { position: relative; display: inline-flex; align-items: center; }
+.find-deals-btn { background: none; border: none; color: #fff; font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 6px; display: flex; gap: 4px; align-items: center; cursor: pointer; }
+.find-deals-btn:hover { background: #212327; }
+.fd-caret { transition: transform 0.25s; }
+.find-deals-wrapper:hover .fd-caret { transform: rotate(180deg); }
+.fd-bridge { position: absolute; top: 100%; left: 0; right: 0; height: 12px; }
+/* Outer panel: bg-bg-surface, no overflow:hidden so right panel can sit alongside */
+.find-deals-panel { position: absolute; top: calc(100% + 12px); left: 0; background: #2F3032; border-radius: 24px; display: none; flex-direction: row; align-items: stretch; z-index: 200; max-width: calc(100vw - 32px); }
+.find-deals-wrapper:hover .find-deals-panel { display: flex; }
+/* Category column — h-437 fixed height matches SC (min-h-408, max-h-455, p-16) */
+.fd-cat-wrapper { display: flex; flex-direction: column; height: 437px; min-height: 408px; max-height: 455px; min-width: 248px; border-radius: 24px; padding: 16px; gap: 8px; overflow: hidden; background: #2F3032; }
+/* Inner scrollable list — min-height:0 is required so flex:1 can shrink below content height */
+.fd-cat-list { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; gap: 8px; }
+.fd-cat-list::-webkit-scrollbar { display: none; }
+.fd-cat-wrapper.has-hover { border-radius: 24px 0 0 24px; }
+/* h-40 px-16 py-8 gap-16 rounded-16 — matches SC category item */
+.fd-cat-item { display: flex; align-items: center; height: 40px; padding: 8px 16px; border-radius: 16px; cursor: pointer; gap: 16px; color: #fff; font-size: 14px; font-weight: 600; user-select: none; }
+.fd-cat-item:hover, .fd-cat-item.active { background: #212327; }
+.fd-cat-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* h-40 px-16 py-8 gap-16 — matches SC "All categories" footer item */
+.fd-all-cats { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 40px; padding: 0 16px; margin-top: auto; border-radius: 16px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); text-decoration: none; flex-shrink: 0; }
+.fd-all-cats:hover { background: #212327; color: #fff; }
+/* Right panel: black inner container (matches sc-web: bg-black rounded-24 p-16 flex flex-row gap-8) */
+/* 648px right panel: promo area = 648-32-200-8 = 408px → each card ~196px wide × ~194px tall (near-square) */
+.fd-right-panel { display: none; background: #000; border-radius: 0 24px 24px 0; padding: 16px; flex-direction: row; gap: 8px; align-self: stretch; overflow: hidden; width: 648px; max-height: 455px; }
+.fd-right-panel.active { display: flex; }
+/* Merchant column: w-200 h-full flex-col gap-8 */
+.fd-merchant-panel { display: flex; flex-direction: column; width: 200px; height: 100%; flex-shrink: 0; gap: 8px; }
+.fd-merchant-list { display: flex; flex-direction: column; flex: 1; overflow-y: auto; scrollbar-width: none; }
+.fd-merchant-list::-webkit-scrollbar { display: none; }
+/* w-248 h-40 px-16 py-8 gap-16 rounded-16 — matches SC merchant item */
+.fd-merchant-item { display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 16px; border-radius: 16px; color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; gap: 16px; }
+.fd-merchant-item:hover { background: #2F3032; }
+/* h-40 px-16 gap-16 — matches SC "All {Category}" footer */
+.fd-merchant-footer { margin-top: auto; flex-shrink: 0; }
+.fd-all-in-cat { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 40px; padding: 0 16px; border-radius: 16px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); text-decoration: none; }
+.fd-all-in-cat:hover { background: #2F3032; color: #fff; }
+/* Keep mobile menu pinned to viewport when nav is sticky.
+   Absolute positioning inside sticky nav anchors to original document flow position. */
+@media (max-width: 767px) {
+  .mobile-menu {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - 64px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+/* Mobile actions wrapper — groups search + hamburger with tight gap, hidden on desktop */
+.mobile-nav-actions { display: flex; align-items: center; gap: 4px; }
+@media (min-width: 768px) { .mobile-nav-actions { display: none; } }
+/* Mobile search button */
+.mobile-nav-search-btn { display: flex; align-items: center; justify-content: center; background: none; border: none; color: #fff; padding: 8px; border-radius: 6px; cursor: pointer; }
+.mobile-nav-search-btn:hover { background: #212327; }
+/* Mobile menu CTA (Get Extension) */
+.mobile-menu-cta { display: block; margin-top: 16px; background: #03FF88; color: #000 !important; font-size: 0.875rem; font-weight: 700; padding: 12px 16px; border-radius: 8px; text-decoration: none; text-align: center; line-height: 1; }
+.mobile-menu-cta:hover { background: #00d474; }
+/* Mobile Find Deals */
+.mobile-fd { display: block; }
+.mobile-fd-trigger { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px 0; border: none; border-bottom: 1px solid #1f2937; color: #fff; font-size: 1rem; font-weight: 500; background: none; cursor: pointer; }
+.mobile-fd-caret { transition: transform 0.25s; }
+.mobile-fd-trigger.open .mobile-fd-caret { transform: rotate(180deg); }
+.mobile-fd-cats { display: flex; flex-direction: column; }
+.mobile-fd-cats[hidden] { display: none; }
+.mobile-fd-cat { display: flex; flex-direction: column; }
+.mobile-fd-cat-trigger { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px 16px; font-size: 0.9rem; font-weight: 500; color: #fff; background: none; border: none; border-bottom: 1px solid #111; cursor: pointer; }
+.mobile-fd-cat-trigger.open .mobile-fd-cat-arrow { transform: rotate(90deg); }
+.mobile-fd-cat-arrow { transition: transform 0.2s; }
+.mobile-fd-merchants { display: flex; flex-direction: column; background: #0a0a0a; padding: 4px 0; }
+.mobile-fd-merchants[hidden] { display: none; }
+.mobile-fd-merchant-link { display: block; padding: 10px 32px; font-size: 0.875rem; color: #d1d5db; text-decoration: none; }
+.mobile-fd-merchant-link:hover { color: #fff; }
+.mobile-fd-all-in-cat { display: block; padding: 10px 32px; font-size: 0.875rem; color: #03FF88; text-decoration: none; }
+.mobile-fd-all-cats-link { display: block; padding: 14px 16px; font-size: 0.875rem; color: rgba(255,255,255,0.6); border-top: 1px solid #1f2937; text-decoration: none; }
+/* ═══ PROMO PANEL ════════════════════════════════════════════════════ */
+/* flex-1 takes remaining space inside black right-panel (768px - 248px - 8px gap - 32px padding = ~480px) */
+.fd-promo-panel { display: none; flex: 1; min-width: 0; overflow: hidden; }
+/* grid-template-rows: 1fr 1fr — equal rows from the panel's defined height, not content */
+.fd-promo-panel.active { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 16px; height: 100%; }
+/* Skeleton fills its grid cell */
+.fd-promo-skeleton { background: #2F3032; border-radius: 24px; animation: fd-pulse 1.5s ease-in-out infinite; }
+.fd-cat-skeleton { animation: fd-pulse 1.5s ease-in-out infinite; pointer-events: none; }
+.fd-cat-skeleton::after { content: ''; width: 55%; height: 10px; background: rgba(255,255,255,0.10); border-radius: 5px; }
+@keyframes fd-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+/* Card: rounded-24 p-16, bg-bg-surface, hover bg-bg-inset; overflow:hidden clips content to fixed cell height */
+.fd-promo-card { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; background: #2F3032; border-radius: 24px; padding: 16px; cursor: pointer; transition: background 0.15s; overflow: hidden; }
+.fd-promo-card:hover { background: #212327; }
+/* Logo row */
+.fd-promo-logo-row { display: flex; gap: 16px; align-items: flex-start; }
+.fd-promo-logo { width: 48px; height: 48px; border-radius: 12px; background: #fff; object-fit: contain; flex-shrink: 0; overflow: hidden; display: block; }
+.fd-promo-logo--placeholder { background: #3a3d40; }
+/* Content: discount (19px/typo-h6), view-btn, code row, health */
+.fd-promo-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 4px; }
+.fd-promo-discount-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+/* typo-h6: 19px font, 24px line-height, bold */
+.fd-promo-discount { font-size: 19px; font-weight: 700; color: #fff; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.26; margin-top: -2px; }
+.fd-promo-view-btn { flex-shrink: 0; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.12); color: #fff; border-radius: 8px; padding: 4px 10px; line-height: 1.4; white-space: nowrap; transition: background 0.15s; border: none; cursor: pointer; }
+.fd-promo-view-btn:hover { background: rgba(255,255,255,0.2); }
+/* Code row: typo-body-md (16px), #D8D9DA (text-on-surface-secondary) */
+.fd-promo-code-row { display: flex; align-items: center; gap: 4px; }
+.fd-promo-code { font-family: 'DM Mono', monospace; font-size: 16px; color: #D8D9DA; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.03em; }
+.fd-promo-code--revealed { color: #fff; background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 4px; }
+.fd-promo-copy-btn { flex-shrink: 0; color: #03FF88; padding: 2px; line-height: 1; display: flex; align-items: center; background: none; border: none; cursor: pointer; }
+.fd-promo-copy-btn:hover { color: #7affcb; }
+/* Health badge: typo-body-sm/bold (13px), icons 16px */
+.fd-promo-health { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; line-height: 1.2; }
+.fd-promo-health--green { color: #03FF88; }
+.fd-promo-health--yellow { color: #FFBC13; }
+.fd-promo-health--red { color: #FF4B33; }
+/* Type tag: typo-body-2xs/bold (10px), h-19, px-8, rounded-8, border #A3A6A8 */
+.fd-promo-meta { display: flex; gap: 4px; align-items: flex-start; margin-top: 2px; flex-wrap: wrap; }
+.fd-promo-tag { display: inline-flex; border: 1px solid #A3A6A8; border-radius: 8px; padding: 0 8px; height: 19px; font-size: 10px; font-weight: 700; white-space: nowrap; color: #A3A6A8; align-items: center; flex-shrink: 0; }
+/* Description: typo-body-sm (13px), white; 1-line clamp matches SC @max-sm container */
+.fd-promo-desc { font-size: 13px; color: #fff; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+/* Bottom section */
+.fd-promo-bottom { display: flex; flex-direction: column; gap: 6px; }
+.fd-promo-stats { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; color: #A3A6A8; font-size: 12px; }
+.fd-promo-stat { display: inline-flex; align-items: center; gap: 3px; }
+/* Uses: accent-secondary (#4E5255), rounded-8, p-8 */
+.fd-promo-uses { display: flex; align-items: center; gap: 8px; background: #4E5255; border-radius: 8px; padding: 8px; }
+.fd-promo-avatar-group { display: flex; flex-direction: row; flex-shrink: 0; }
+/* Avatar ring matches bg-bg-surface of card (#2F3032) */
+.fd-promo-avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 2px solid #2F3032; flex-shrink: 0; }
+.fd-promo-avatar + .fd-promo-avatar { margin-left: -6px; }
+/* Uses text: typo-body-sm/bold (13px), #D8D9DA */
+.fd-promo-uses-text { font-size: 13px; font-weight: 700; color: #D8D9DA; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* ═══ LOGO ═══════════════════════════════════════════════════════════ */
+a.logo svg { height: 32px; width: auto; display: block; }
+@media (min-width: 1024px) { a.logo svg { height: 40px; } }
+/* ═══ SEARCH MODAL ══════════════════════════════════════════════════ */
+.nav-search-btn { background: none; border: none; color: #fff; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; }
+.nav-search-btn:hover, .nav-search-btn.open { background: #212327; }
+.nav-search-icon-close { display: none; }
+.nav-search-btn.open .nav-search-icon-search { display: none; }
+.nav-search-btn.open .nav-search-icon-close { display: flex; }
+/* Overlay: dark on mobile, light blur on desktop */
+.search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 499; display: none; }
+.search-overlay.open { display: block; }
+@media (min-width: 768px) { .search-overlay { background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); } }
+/* Panel */
+.search-panel { position: fixed; top: 0; left: 0; right: 0; z-index: 500; background: #2F3032; display: flex; flex-direction: column; max-height: 100dvh; overflow: hidden; transform: translateY(-8px); opacity: 0; pointer-events: none; transition: transform 0.2s ease, opacity 0.2s ease; }
+.search-panel.open { transform: none; opacity: 1; pointer-events: auto; }
+@media (min-width: 768px) { .search-panel { top: 64px; right: 16px; left: auto; width: min(966px, calc(100vw - 32px)); max-height: min(75vh, 700px); border-radius: 32px; padding: 32px; gap: 32px; } }
+@media (min-width: 1280px) { .search-panel { top: 72px; } }
+/* Input row */
+.search-input-row { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #3a3d40; flex-shrink: 0; }
+@media (min-width: 768px) { .search-input-row { padding: 0; border-bottom: none; } }
+.search-input-wrap { display: flex; align-items: center; flex: 1; gap: 10px; background: #212327; border-radius: 16px; padding: 10px 16px; height: 56px; box-sizing: border-box; }
+.search-panel .search-input { flex: 1; background: none; border: none; color: #fff; font-size: 16px; outline: none; font-family: inherit; min-width: 0; }
+.search-panel .search-input::placeholder { color: #A3A6A8; }
+.search-panel .search-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.search-find-btn { background: #03FF88; color: #000; border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0; font-family: inherit; }
+.search-find-btn:hover { background: #00d975; }
+.search-close-btn { background: none; border: none; color: #A3A6A8; padding: 6px; border-radius: 8px; cursor: pointer; display: flex; flex-shrink: 0; }
+.search-close-btn:hover { color: #fff; background: #3a3d40; }
+@media (min-width: 768px) { .search-close-btn { display: none; } }
+/* Results container */
+.search-results-container { flex: 1; overflow-y: auto; padding: 0 16px 16px; }
+@media (min-width: 768px) { .search-results-container { padding: 0; } }
+/* Pre-search sections */
+.search-pre-view { display: flex; flex-direction: column; gap: 32px; }
+.search-section-title { font-size: 16px; font-weight: 700; color: #fff; padding-bottom: 12px; margin: 0; }
+/* Popular stores grid */
+.search-popular-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (min-width: 640px) { .search-popular-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 768px) { .search-popular-grid { grid-template-columns: repeat(4, 1fr); } }
+.search-popular-card { display: block; border-radius: 16px; padding: 16px; background: #212327; color: #fff; text-decoration: none; border: 0.5px solid rgba(255,255,255,0.06); }
+.search-popular-card:hover { background: #3a3d40; }
+.search-popular-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 4px; }
+.search-popular-codes { font-size: 13px; color: #A3A6A8; }
+/* Trending grid */
+.search-trending-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (min-width: 640px) { .search-trending-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 768px) { .search-trending-grid { grid-template-columns: repeat(4, 1fr); } }
+.search-trending-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 16px; text-decoration: none; color: #fff; background: #212327; overflow: hidden; }
+.search-trending-item:hover { background: #3a3d40; }
+.search-trending-logo { width: 48px; height: 48px; border-radius: 8px; background: #fff; object-fit: contain; padding: 2px; flex-shrink: 0; }
+.search-trending-logo-fallback { width: 48px; height: 48px; border-radius: 8px; background: #4E5255; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #A3A6A8; font-size: 14px; font-weight: 700; }
+.search-trending-info { flex: 1; min-width: 0; }
+.search-trending-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-trending-discount { font-size: 12px; color: #A3A6A8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Categories */
+.search-cat-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.search-cat-item { display: inline-flex; border-radius: 16px; padding: 10px 16px; background: #212327; color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
+.search-cat-item:hover { background: #3a3d40; }
+/* Search result rows */
+.search-result-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; cursor: pointer; text-decoration: none; color: #fff; }
+.search-result-row:hover, .search-result-row.focused { background: #212327; }
+.search-result-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: contain; background: #fff; padding: 3px; flex-shrink: 0; }
+.search-result-logo-fallback { width: 40px; height: 40px; border-radius: 50%; background: #4E5255; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #A3A6A8; font-size: 14px; font-weight: 700; }
+.search-result-text { flex: 1; min-width: 0; }
+.search-result-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-result-badge { display: inline-flex; align-items: center; background: #3a3d40; border-radius: 12px; padding: 3px 8px; font-size: 11px; font-weight: 600; color: #A3A6A8; flex-shrink: 0; white-space: nowrap; }
+.search-result-badge.has-codes { color: #fff; }
+.search-no-results { text-align: center; color: #A3A6A8; padding: 32px 16px; font-size: 14px; }
+.search-loading { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.search-skeleton-row { display: flex; align-items: center; gap: 12px; padding: 8px 12px; }
+.search-skeleton-logo { width: 40px; height: 40px; border-radius: 50%; background: #3a3d40; animation: search-pulse 1.5s infinite; flex-shrink: 0; }
+.search-skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.search-skeleton-line { height: 10px; border-radius: 5px; background: #3a3d40; animation: search-pulse 1.5s infinite; }
+.search-skeleton-line.short { width: 55%; }
+@keyframes search-pulse { 0%,100% { opacity:0.4; } 50% { opacity:0.9; } }
+    </style>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+
+                <div class="nav-left">
+                    <a href="https://simplycodes.com" class="logo" data-track="logo_click" data-section="header" aria-label="SimplyCodes homepage">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="3672" height="800" viewBox="0 0 3672 800" fill="none" style="width:auto;display:block;" aria-label="SimplyCodes">
+<path d="M59.6436 216.729C78.2327 97.0506 191.536 0 312.683 0H3482.88C3603.99 0 3687.13 97.0506 3668.5 216.729L3611.47 583.271C3592.88 702.983 3479.58 800 3358.43 800H188.232C67.0859 800 -16.0145 702.949 2.60799 583.271L59.6102 216.729H59.6436Z" fill="#03FF88"></path>
+<path d="M464.934 288.882C462.331 288.882 460.195 286.813 460.161 284.21C459.894 271.161 456.357 260.948 449.615 253.773C441.539 245.229 428.723 240.891 411.503 240.891C396.718 240.891 384.403 244.295 374.858 250.97C365.213 257.745 359.072 267.156 356.603 279.037C354.767 289.349 356.903 298.093 362.91 305.002C368.784 311.71 378.997 317.35 393.381 321.789L455.556 338.375C493.168 348.521 519.366 363.639 533.35 383.363C547.367 403.053 551.872 427.75 546.733 456.818C539.591 497.234 518.966 529.172 485.392 551.7C451.684 574.294 407.131 585.774 352.965 585.774C298.8 585.774 263.991 575.662 239.595 553.902C217.068 533.845 207.322 503.942 210.593 464.895C210.793 462.425 212.929 460.523 215.399 460.523H312.116C314.652 460.523 316.788 462.525 316.888 465.062C317.456 478.812 321.46 489.625 328.869 497.267C338.014 506.679 352.431 511.451 371.754 511.451C387.674 511.451 401.09 507.78 411.669 500.471C422.449 493.096 429.057 482.75 431.293 469.767C433.429 457.853 431.093 448.108 424.351 440.799C417.743 433.69 405.495 427.45 387.874 422.243L326.7 406.858C294.027 397.747 270.566 383.296 256.916 363.94C243.333 344.683 239.061 319.886 244.267 290.25C251.009 252.171 270.632 221.701 302.538 199.741C334.576 177.748 376.961 166.568 428.556 166.568C480.152 166.568 513.659 176.88 537.254 199.04C558.914 219.432 568.325 248.133 565.222 284.51C565.021 286.98 562.885 288.882 560.416 288.882H464.934Z" fill="black"></path>
+<path d="M690.006 285.412L638.878 575.329C638.477 577.632 636.475 579.3 634.138 579.3H543.362C540.358 579.3 538.122 576.597 538.623 573.66L589.718 283.743C590.119 281.44 592.121 279.772 594.457 279.772H685.267C688.271 279.772 690.507 282.475 690.006 285.412Z" fill="black"></path>
+<path d="M1134.98 368.512L1098.5 575.362C1098.1 577.664 1096.1 579.333 1093.76 579.333H1005.32C1002.32 579.333 1000.08 576.63 1000.58 573.693L1032.95 389.871C1035.56 375.153 1034.09 364.373 1028.58 357.799C1024.24 352.626 1017.43 349.989 1008.32 349.989C996.476 349.989 986.13 354.361 977.553 362.938C969.043 371.449 963.336 383.496 960.633 398.782L929.462 575.395C929.062 577.698 927.059 579.366 924.723 579.366H836.817C833.813 579.366 831.577 576.663 832.078 573.726L864.45 389.904C867.053 375.186 865.585 364.407 860.078 357.832C855.74 352.659 848.931 350.023 839.82 350.023C827.606 350.023 817.06 354.395 808.482 362.972C799.905 371.549 794.265 383.53 791.562 398.815L760.391 575.428C759.991 577.731 757.988 579.4 755.652 579.4H667.746C664.742 579.4 662.506 576.697 663.007 573.76L714.135 283.743C714.536 281.44 716.538 279.771 718.874 279.771H780.882C783.919 279.771 786.256 282.574 785.588 285.545C783.152 296.658 779.714 307.705 775.342 318.418L769.602 332.535H781.583L782.084 331.767C792.463 315.08 806.513 300.997 823.868 289.883C841.089 278.87 861.947 273.297 885.876 273.297C897.891 273.297 908.704 274.832 918.048 277.902C927.426 280.973 934.835 287.48 938.907 296.258C943.713 306.57 943.679 318.852 938.873 330.866L937.939 333.136H949.92L950.387 332.368C961.234 315.314 975.885 301.03 993.973 289.917C1011.96 278.903 1033.42 273.297 1057.75 273.297C1087.52 273.297 1109.35 281.874 1122.63 298.727C1135.94 315.681 1140.05 339.176 1134.88 368.512H1134.98Z" fill="black"></path>
+<path d="M1249.58 278.136C1249.58 278.136 1249.58 278.169 1249.58 278.202H1249.65L1249.58 278.136Z" fill="black"></path>
+<path d="M1249.58 278.136C1249.58 278.136 1249.58 278.169 1249.58 278.202H1249.65L1249.58 278.136Z" fill="black"></path>
+<path d="M1431.37 313.045C1415.78 286.613 1388.62 273.23 1350.6 273.23C1326.21 273.23 1304.82 278.536 1286.96 288.982C1269.04 299.495 1254.52 312.878 1243.88 328.797L1243.37 329.531H1230.79L1231.79 327.195L1235.67 318.251C1240.27 307.638 1243.84 296.691 1246.34 285.645C1247.01 282.674 1244.68 279.838 1241.64 279.838H1175.09C1172.76 279.838 1170.75 281.506 1170.35 283.809L1099.6 685.094C1099.07 688.031 1101.34 690.734 1104.34 690.734H1195.12C1197.45 690.734 1199.45 689.066 1199.86 686.763L1217.04 589.278C1217.28 588.01 1216.98 586.709 1216.24 585.674L1213.84 582.27C1203.69 567.819 1197.49 550.398 1195.82 531.942L1195.65 530.107H1207.87L1208.23 531.275C1213.2 547.027 1222.92 560.31 1237.07 570.756C1251.15 581.135 1270.61 586.408 1294.9 586.408C1333.05 586.408 1365.12 572.925 1390.19 546.326C1415.32 519.627 1432.64 480.347 1441.61 429.519C1450.59 378.824 1447.15 339.643 1431.44 313.045H1431.37ZM1338.59 430.086C1329.41 482.149 1307.89 509.682 1276.35 509.682C1265 509.682 1256.16 506.044 1250.12 498.836C1244.88 492.561 1241.64 483.517 1240.57 471.87C1239.5 460.456 1240.44 446.205 1243.41 429.485C1252.69 376.688 1273.04 349.889 1303.91 349.889C1320.2 349.889 1331.38 356.931 1337.09 370.781C1342.63 384.264 1343.13 404.221 1338.59 430.086Z" fill="black"></path>
+<path d="M1606.98 161.528L1534.03 575.262C1533.63 577.564 1531.62 579.233 1529.29 579.233H1439.11C1436.11 579.233 1433.87 576.53 1434.37 573.593L1507.29 159.86C1507.69 157.557 1509.7 155.888 1512.03 155.888H1602.24C1605.24 155.888 1607.48 158.592 1606.98 161.528Z" fill="black"></path>
+<path d="M1907.14 285.478L1906.08 291.585C1905.91 292.553 1905.61 293.454 1905.14 294.322L1751.79 593.817C1733.77 627.725 1712.37 653.055 1688.18 669.075C1664.02 685.027 1634.65 693.104 1600.91 693.104C1579.31 693.104 1560.46 690.701 1544.94 685.995C1542.64 685.294 1541.27 682.958 1541.67 680.589L1554.32 608.635C1554.82 605.798 1557.69 604.063 1560.46 604.897C1575.88 609.403 1591.16 611.672 1606.05 611.672C1662.01 611.672 1678 587.042 1678.67 586.008L1678.83 585.707V585.407L1680.84 574.16L1681.2 572.191H1641.36C1638.99 572.191 1636.98 570.489 1636.62 568.153L1592.26 294.956C1592.16 294.422 1592.2 293.888 1592.26 293.354L1593.96 283.776C1594.37 281.473 1596.37 279.804 1598.7 279.804H1692.02C1694.45 279.804 1696.49 281.606 1696.79 284.043L1710.94 401.351C1713.11 419.373 1713.68 437.728 1712.61 455.884L1711.67 472.404H1725.52L1725.89 471.236L1729.03 461.19C1735.77 439.431 1744.15 417.938 1753.86 397.213L1807.72 282.608C1808.52 280.906 1810.23 279.838 1812.06 279.838H1902.44C1905.44 279.838 1907.68 282.541 1907.18 285.478H1907.14Z" fill="black"></path>
+<path d="M2155.74 328.563C2153.04 328.563 2150.84 326.327 2150.94 323.624C2151.87 299.862 2147.4 282.408 2137.49 271.695C2129.48 263.051 2117.86 258.646 2102.98 258.646C2057.76 258.646 2027.82 298.394 2013.97 376.788C2005.26 426.148 2008.57 460.389 2023.78 478.511C2032.56 488.991 2045.44 494.297 2062.03 494.297C2095.44 494.297 2119.4 471.903 2133.38 427.783C2134.02 425.781 2135.85 424.379 2137.96 424.379H2240.88C2243.98 424.379 2246.32 427.316 2245.55 430.353C2233.17 479.145 2210.41 517.392 2177.87 544.124C2143.66 572.191 2099.61 586.408 2046.98 586.408C1988.44 586.408 1946.12 568.52 1921.16 533.177L1920.63 532.476C1903.97 508.548 1895.6 476.943 1895.6 438.129C1895.6 419.54 1897.53 399.249 1901.37 377.356C1913.38 309.307 1938.68 256.576 1976.66 220.6C2014.51 184.723 2063.27 166.534 2121.54 166.534C2173.67 166.534 2212.58 180.718 2237.21 208.652C2260.9 235.584 2269.88 274.498 2263.87 324.325C2263.57 326.728 2261.51 328.563 2259.1 328.563H2155.74Z" fill="black"></path>
+<path d="M2541.04 313.479C2520.08 286.379 2485.34 272.629 2437.75 272.629C2390.16 272.629 2350.81 286.546 2319.88 314.013C2288.97 341.446 2268.85 380.493 2260.1 430.086C2251.46 479.212 2257.63 517.826 2278.43 544.925L2278.93 545.492C2300.38 573.026 2334.06 586.375 2381.88 586.375C2429.71 586.375 2469.29 572.658 2499.93 545.592C2530.6 518.493 2550.59 479.412 2559.4 429.519C2568.21 379.659 2562.03 340.611 2541.04 313.479ZM2459.48 429.519H2459.44C2450 483.117 2428.81 510.283 2396.43 510.283C2379.81 510.283 2368.3 503.175 2362.23 489.124C2356.32 475.474 2355.69 455.25 2360.32 428.918C2369.57 376.455 2391.73 348.721 2424.37 348.721C2436.58 348.721 2445.99 352.593 2452.4 360.235C2462.98 372.85 2465.38 396.145 2459.48 429.519Z" fill="black"></path>
+<path d="M2811.37 159.86L2791.98 269.826C2791.75 271.061 2792.05 272.329 2792.75 273.364L2794.85 276.467C2804.93 291.252 2811.1 308.306 2813.2 327.095L2813.4 328.931H2801.19L2800.82 327.796C2795.48 311.543 2785.74 298.16 2771.79 288.015C2757.77 277.802 2738.38 272.629 2714.12 272.629C2677.84 272.629 2646.24 286.346 2620.14 313.345C2593.97 340.411 2576.19 379.692 2567.31 430.086C2558.66 479.212 2562.27 517.625 2577.99 544.358L2578.82 545.626C2595.11 572.258 2621.71 585.741 2657.82 585.741C2682.55 585.741 2704.14 580.435 2722.03 569.989C2739.95 559.509 2754.47 546.093 2765.15 530.174L2765.61 529.44H2778.26L2777.19 531.809L2773.09 540.853C2768.32 551.466 2764.65 562.346 2762.11 573.293C2761.41 576.33 2763.68 579.233 2766.78 579.233H2833.93C2836.27 579.233 2838.27 577.564 2838.67 575.262L2911.62 161.528C2912.16 158.592 2909.89 155.888 2906.88 155.888H2816.07C2813.74 155.888 2811.74 157.557 2811.34 159.86H2811.37ZM2765.81 427.55L2765.48 429.519C2756.17 482.349 2735.61 509.115 2704.37 509.115C2688.45 509.115 2677.47 502.107 2671.8 488.223C2666.26 474.74 2665.76 454.816 2670.3 428.952C2679.58 376.121 2700.34 349.322 2731.94 349.322C2743.52 349.322 2752.5 353.026 2758.64 360.369C2768.88 372.55 2771.29 395.144 2765.78 427.55H2765.81Z" fill="black"></path>
+<path d="M3152.21 311.343C3132.59 285.311 3100.55 272.629 3054.3 272.629C3008.04 272.629 2968.86 286.646 2937.52 314.313C2906.18 341.98 2885.76 381.728 2876.81 432.456C2868.24 481.215 2873.98 519.194 2893.87 545.292L2894.7 546.36C2915.29 572.492 2949.27 585.708 2995.66 585.708C3038.14 585.708 3073.89 575.829 3101.85 556.372C3127.28 538.684 3145.31 515.389 3155.42 487.088C3156.55 483.918 3154.25 480.581 3150.91 480.581H3063.17C3061.2 480.581 3059.5 481.782 3058.73 483.618C3049.36 506.011 3033.54 517.325 3011.74 517.325C2996.69 517.325 2986.08 511.752 2980.21 500.772C2974.5 490.025 2973 472.237 2975.73 447.941L2975.9 446.439H3160.36C3162.69 446.439 3164.7 444.771 3165.1 442.468L3167.9 426.515C3176.84 375.887 3171.57 337.174 3152.21 311.343ZM3077.49 391.973L3077.39 393.542H2986.85L2987.52 391.373C2993.46 372.683 3001 358.867 3009.91 350.357C3018.99 341.679 3029.63 337.441 3042.35 337.441C3055.06 337.441 3064.94 341.88 3070.65 350.657C3076.19 359.301 3078.49 373.184 3077.49 391.973Z" fill="black"></path>
+<path d="M3289.51 357.165C3288.15 364.941 3290.51 371.148 3296.59 375.687C3302.43 380.026 3312.14 383.63 3325.42 386.367L3372.35 395.277C3403.38 401.518 3425.01 412.365 3436.62 427.55C3448.21 442.768 3452.14 461.157 3448.44 482.283C3442.63 515.222 3425.58 540.987 3397.78 558.775C3369.91 576.663 3333.63 585.741 3289.95 585.741C3246.26 585.741 3215.42 578.365 3195.23 563.781L3193.1 562.112C3175.64 548.396 3165.86 517.892 3168 484.852C3168.17 482.349 3170.3 480.414 3172.81 480.414H3257.71C3260.21 480.414 3262.28 482.349 3262.48 484.852C3263.38 496.233 3266.72 511.084 3272.86 516.424C3279.9 522.598 3290.21 525.735 3303.53 525.735C3315.21 525.735 3324.86 523.366 3332.2 518.626C3339.67 513.787 3344.18 507.146 3345.61 498.836C3347.02 490.759 3344.75 484.051 3338.87 478.878C3333.2 473.973 3323.99 470.135 3310.67 467.231L3261.45 458.32C3234.38 452.88 3214.89 442.535 3203.48 427.516C3192.06 412.598 3188.22 393.876 3192.13 371.916C3197.47 341.679 3213.59 317.35 3240.05 299.562C3266.59 281.674 3302.2 272.596 3345.81 272.596C3389.43 272.596 3417.64 280.372 3437.06 297.092C3454.61 312.177 3462.62 333.403 3460.85 360.268C3460.69 362.771 3458.55 364.674 3456.05 364.674H3371.91C3369.38 364.674 3367.34 362.705 3367.14 360.202C3366.54 352.392 3363.67 346.051 3358.53 341.412C3352.16 335.605 3342.58 332.668 3330.03 332.668C3319.15 332.668 3309.91 334.971 3302.6 339.477C3295.12 344.049 3290.72 350.023 3289.48 357.165H3289.51Z" fill="black"></path>
+<path d="M708.428 183.822L696.78 249.835C696.38 252.138 694.377 253.806 692.041 253.806H601.265C598.261 253.806 596.025 251.103 596.526 248.166L608.14 182.153C608.54 179.85 610.543 178.182 612.879 178.182H703.655C706.659 178.182 708.895 180.885 708.394 183.822H708.428Z" fill="black"></path>
+</svg>
+                    </a>
+                    <div class="nav-links">
+                        
+                        <div class="find-deals-wrapper">
+                            <button class="find-deals-btn" aria-haspopup="true" aria-expanded="false" data-track="nav_click" data-section="header" data-param-nav_item="find_deals">
+                                Find Deals
+                                <svg class="fd-caret" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </button>
+                            
+                            <div class="fd-bridge"></div>
+                            <div class="find-deals-panel" id="fd-panel">
+                                <div class="fd-cat-wrapper" id="fd-cat-wrapper">
+                                    <a href="https://simplycodes.com/category/artificial-intelligence" class="fd-cat-item" data-slug="artificial-intelligence" data-id="3660" data-name="Artificial Intelligence">Artificial Intelligence</a><a href="https://simplycodes.com/category/automotive" class="fd-cat-item" data-slug="automotive" data-id="661" data-name="Automotive">Automotive</a><a href="https://simplycodes.com/category/beauty" class="fd-cat-item" data-slug="beauty" data-id="24" data-name="Beauty">Beauty</a><a href="https://simplycodes.com/category/business" class="fd-cat-item" data-slug="business" data-id="911" data-name="Business">Business</a><a href="https://simplycodes.com/category/career-learning" class="fd-cat-item" data-slug="career-learning" data-id="786" data-name="Education">Education</a><a href="https://simplycodes.com/category/devices" class="fd-cat-item" data-slug="devices" data-id="1549" data-name="Electronics">Electronics</a><a href="https://simplycodes.com/category/online" class="fd-cat-item" data-slug="online" data-id="736" data-name="Entertainment">Entertainment</a><a href="https://simplycodes.com/category/fashion" class="fd-cat-item" data-slug="fashion" data-id="1466" data-name="Apparel">Apparel</a><a href="https://simplycodes.com/category/food-restaurants" class="fd-cat-item" data-slug="food-restaurants" data-id="1328" data-name="Food &amp; Restaurants">Food &amp; Restaurants</a><a href="https://simplycodes.com/category/health" class="fd-cat-item" data-slug="health" data-id="1510" data-name="Health">Health</a><a href="https://simplycodes.com/category/hobbies-toys" class="fd-cat-item" data-slug="hobbies-toys" data-id="1235" data-name="Hobbies &amp; Toys">Hobbies &amp; Toys</a><a href="https://simplycodes.com/category/home-garden" class="fd-cat-item" data-slug="home-garden" data-id="343" data-name="Home &amp; Garden">Home &amp; Garden</a><a href="https://simplycodes.com/category/money" class="fd-cat-item" data-slug="money" data-id="1551" data-name="Money">Money</a><a href="https://simplycodes.com/category/pets" class="fd-cat-item" data-slug="pets" data-id="988" data-name="Pets">Pets</a><a href="https://simplycodes.com/category/shopping-related-services" class="fd-cat-item" data-slug="shopping-related-services" data-id="596" data-name="Shopping">Shopping</a><a href="https://simplycodes.com/category/software" class="fd-cat-item" data-slug="software" data-id="1550" data-name="Software">Software</a><a href="https://simplycodes.com/category/sports-outdoors" class="fd-cat-item" data-slug="sports-outdoors" data-id="106" data-name="Sports &amp; Outdoors">Sports &amp; Outdoors</a><a href="https://simplycodes.com/category/places" class="fd-cat-item" data-slug="places" data-id="1548" data-name="Travel">Travel</a><a href="https://simplycodes.com/category/blockchain-web3" class="fd-cat-item" data-slug="blockchain-web3" data-id="3603" data-name="Blockchain &amp; Web3">Blockchain &amp; Web3</a>
+                                </div>
+                                
+                                <div class="fd-right-panel" id="fd-right-panel">
+                                    <div class="fd-merchant-panel" id="fd-merchant-panel">
+                                        
+                                    </div>
+                                    <div class="fd-promo-panel" id="fd-promo-panel">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="/stores" class="nav-link" data-track="nav_click" data-section="header" data-param-nav_item="all_stores">Stores</a>
+                        <a href="/category" class="nav-link" data-track="nav_click" data-section="header" data-param-nav_item="categories">Categories</a>
+                        <a href="/how-it-works" class="nav-link" data-track="nav_click" data-section="header" data-param-nav_item="how_it_works">How we verify</a>
+                        <a href="/blog" class="nav-link" data-track="nav_click" data-section="header" data-param-nav_item="blog" data-northstar="pending">Research</a>
+                    </div>
+                </div>
+
+                <div class="nav-right">
+                    
+                    <button class="nav-search-btn" id="search-trigger" aria-label="Search stores" aria-expanded="false" aria-controls="search-panel">
+                        <span class="nav-search-icon-search" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"></path></svg></span>
+                        <span class="nav-search-icon-close" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></span>
+                    </button>
+                    <a href="/go/extension" class="cta-button" data-track="extension_cta_click" data-section="header" data-param-cta_text="Get Extension" target="_blank" rel="noopener noreferrer">
+                        Add to Chrome
+                    </a>
+                </div>
+
+                
+                <div class="mobile-nav-actions">
+                <button class="mobile-nav-search-btn" id="mobile-search-trigger" aria-label="Search stores" data-track="nav_click" data-section="mobile_nav" data-param-nav_item="search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"></path></svg>
+                </button>
+
+                
+                <button class="hamburger-btn" aria-label="Open navigation menu" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                </div>
+
+            </div>
+        </div>
+
+        
+        <div class="mobile-menu" role="navigation" aria-label="Mobile navigation">
+            
+            <div class="mobile-fd">
+                <button class="mobile-fd-trigger" aria-expanded="false" data-track="nav_click" data-section="mobile_nav" data-param-nav_item="find_deals">
+                    Find Deals
+                    <svg class="mobile-fd-caret" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="mobile-fd-cats" id="mobile-fd-cats" hidden="">
+                </div>
+            </div>
+            
+            <a href="/stores" class="mobile-menu-link" data-track="nav_click" data-section="mobile_nav" data-param-nav_item="all_stores">Stores</a>
+            <a href="/category" class="mobile-menu-link" data-track="nav_click" data-section="mobile_nav" data-param-nav_item="categories">Categories</a>
+            <a href="/how-it-works" class="mobile-menu-link" data-track="nav_click" data-section="mobile_nav" data-param-nav_item="how_it_works">How we verify</a>
+            <a href="/go/app" class="mobile-menu-cta" data-track="app_cta_click" data-section="mobile_nav" data-param-cta_text="Get App" target="_blank" rel="noopener noreferrer">Get App</a>
+            <a href="/blog" class="mobile-menu-link" data-track="nav_click" data-section="mobile_nav" data-param-nav_item="blog" data-northstar="pending">Research</a>
+        </div>
+    <!-- SEO: static store/category links for crawler discovery.
+         Visually hidden (clip/position trick) but not display:none — standard link equity pattern.
+         tabindex="-1" on each link removes from tab order without hiding from AT or crawlers. -->
+<div class="visually-hidden">
+    <a href="https://simplycodes.com/category/artificial-intelligence" tabindex="-1">Artificial Intelligence coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/filmora.wondershare.com" tabindex="-1">Filmora promo codes</a>
+    <a href="https://simplycodes.com/store/hostinger.com" tabindex="-1">Hostinger promo codes</a>
+    <a href="https://simplycodes.com/store/kittl.com" tabindex="-1">Kittl promo codes</a>
+    <a href="https://simplycodes.com/store/purple.ai" tabindex="-1">Purple promo codes</a>
+    <a href="https://simplycodes.com/store/quillbot.com" tabindex="-1">QuillBot promo codes</a>
+    <a href="https://simplycodes.com/store/unbounce.com" tabindex="-1">Unbounce promo codes</a>
+    <a href="https://simplycodes.com/category/automotive" tabindex="-1">Automotive coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/aaa.com" tabindex="-1">AAA promo codes</a>
+    <a href="https://simplycodes.com/store/shop.advanceautoparts.com" tabindex="-1">Advance Auto Parts promo codes</a>
+    <a href="https://simplycodes.com/store/autozone.com" tabindex="-1">AutoZone promo codes</a>
+    <a href="https://simplycodes.com/store/discounttire.com" tabindex="-1">Discount Tire promo codes</a>
+    <a href="https://simplycodes.com/store/oreilly.com" tabindex="-1">O'Reilly promo codes</a>
+    <a href="https://simplycodes.com/store/safelite.com" tabindex="-1">Safelite promo codes</a>
+    <a href="https://simplycodes.com/store/vioc.com" tabindex="-1">Valvoline promo codes</a>
+    <a href="https://simplycodes.com/category/beauty" tabindex="-1">Beauty coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/dossier.co" tabindex="-1">Dossier promo codes</a>
+    <a href="https://simplycodes.com/store/fragrancenet.com" tabindex="-1">FragranceNet promo codes</a>
+    <a href="https://simplycodes.com/store/glossier.com" tabindex="-1">Glossier promo codes</a>
+    <a href="https://simplycodes.com/store/trypura.com" tabindex="-1">Pura promo codes</a>
+    <a href="https://simplycodes.com/store/sephora.com" tabindex="-1">Sephora promo codes</a>
+    <a href="https://simplycodes.com/store/theordinary.com-en-us" tabindex="-1">The Ordinary promo codes</a>
+    <a href="https://simplycodes.com/store/ulta.com" tabindex="-1">ULTA promo codes</a>
+    <a href="https://simplycodes.com/category/business" tabindex="-1">Business coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/fedex.com-en-us" tabindex="-1">FedEx promo codes</a>
+    <a href="https://simplycodes.com/store/legalzoom.com" tabindex="-1">LegalZoom promo codes</a>
+    <a href="https://simplycodes.com/store/officedepot.com" tabindex="-1">Office Depot promo codes</a>
+    <a href="https://simplycodes.com/store/staples.com" tabindex="-1">Staples promo codes</a>
+    <a href="https://simplycodes.com/store/uhaul.com" tabindex="-1">U-Haul promo codes</a>
+    <a href="https://simplycodes.com/store/ups.com-us" tabindex="-1">UPS promo codes</a>
+    <a href="https://simplycodes.com/store/usps.com" tabindex="-1">USPS promo codes</a>
+    <a href="https://simplycodes.com/category/career-learning" tabindex="-1">Education coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/abeka.com" tabindex="-1">Abeka promo codes</a>
+    <a href="https://simplycodes.com/store/cengage.com" tabindex="-1">Cengage promo codes</a>
+    <a href="https://simplycodes.com/store/chegg.com" tabindex="-1">Chegg promo codes</a>
+    <a href="https://simplycodes.com/store/comptia.org" tabindex="-1">CompTIA promo codes</a>
+    <a href="https://simplycodes.com/store/duolingo.com" tabindex="-1">Duolingo promo codes</a>
+    <a href="https://simplycodes.com/store/kaplan.com" tabindex="-1">Kaplan promo codes</a>
+    <a href="https://simplycodes.com/store/udemy.com" tabindex="-1">Udemy promo codes</a>
+    <a href="https://simplycodes.com/category/devices" tabindex="-1">Electronics coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/apple.com" tabindex="-1">Apple promo codes</a>
+    <a href="https://simplycodes.com/store/bestbuy.com" tabindex="-1">Best Buy promo codes</a>
+    <a href="https://simplycodes.com/store/dell.com" tabindex="-1">Dell promo codes</a>
+    <a href="https://simplycodes.com/store/mintmobile.com" tabindex="-1">Mint Mobile promo codes</a>
+    <a href="https://simplycodes.com/store/playstation.com-en-us" tabindex="-1">PlayStation promo codes</a>
+    <a href="https://simplycodes.com/store/samsung.com" tabindex="-1">Samsung promo codes</a>
+    <a href="https://simplycodes.com/store/t-mobile.com" tabindex="-1">T-Mobile promo codes</a>
+    <a href="https://simplycodes.com/category/online" tabindex="-1">Entertainment coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/gamestop.com" tabindex="-1">GameStop promo codes</a>
+    <a href="https://simplycodes.com/store/partycity.com" tabindex="-1">Party City promo codes</a>
+    <a href="https://simplycodes.com/store/seatgeek.com" tabindex="-1">SeatGeek promo codes</a>
+    <a href="https://simplycodes.com/store/stubhub.com" tabindex="-1">StubHub promo codes</a>
+    <a href="https://simplycodes.com/store/ticketmaster.com" tabindex="-1">Ticketmaster promo codes</a>
+    <a href="https://simplycodes.com/store/tiktok.com" tabindex="-1">TikTok promo codes</a>
+    <a href="https://simplycodes.com/store/vividseats.com" tabindex="-1">Vivid Seats promo codes</a>
+    <a href="https://simplycodes.com/category/fashion" tabindex="-1">Apparel coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/carters.com" tabindex="-1">Carter's promo codes</a>
+    <a href="https://simplycodes.com/store/dsw.com" tabindex="-1">DSW promo codes</a>
+    <a href="https://simplycodes.com/store/fashionnova.com" tabindex="-1">Fashion Nova promo codes</a>
+    <a href="https://simplycodes.com/store/nike.com" tabindex="-1">Nike promo codes</a>
+    <a href="https://simplycodes.com/store/oldnavy.gap.com" tabindex="-1">Old Navy promo codes</a>
+    <a href="https://simplycodes.com/store/us.shein.com" tabindex="-1">SHEIN promo codes</a>
+    <a href="https://simplycodes.com/store/skims.com" tabindex="-1">SKIMS promo codes</a>
+    <a href="https://simplycodes.com/category/food-restaurants" tabindex="-1">Food &amp; Restaurants coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/doordash.com" tabindex="-1">DoorDash promo codes</a>
+    <a href="https://simplycodes.com/store/grubhub.com" tabindex="-1">GrubHub promo codes</a>
+    <a href="https://simplycodes.com/store/instacart.com" tabindex="-1">Instacart promo codes</a>
+    <a href="https://simplycodes.com/store/papajohns.com" tabindex="-1">Papa John's promo codes</a>
+    <a href="https://simplycodes.com/store/pizzahut.com" tabindex="-1">Pizza Hut promo codes</a>
+    <a href="https://simplycodes.com/store/subway.com" tabindex="-1">Subway promo codes</a>
+    <a href="https://simplycodes.com/store/ubereats.com" tabindex="-1">UberEats promo codes</a>
+    <a href="https://simplycodes.com/store/wingstop.com" tabindex="-1">Wingstop promo codes</a>
+    <a href="https://simplycodes.com/category/health" tabindex="-1">Health coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/1800contacts.com" tabindex="-1">1-800 Contacts promo codes</a>
+    <a href="https://simplycodes.com/store/cvs.com" tabindex="-1">CVS promo codes</a>
+    <a href="https://simplycodes.com/store/goodrx.com" tabindex="-1">GoodRx promo codes</a>
+    <a href="https://simplycodes.com/store/planetfitness.com" tabindex="-1">Planet Fitness promo codes</a>
+    <a href="https://simplycodes.com/store/walgreens.com" tabindex="-1">Walgreens promo codes</a>
+    <a href="https://simplycodes.com/store/zennioptical.com" tabindex="-1">Zenni Optical promo codes</a>
+    <a href="https://simplycodes.com/store/iherb.com" tabindex="-1">iHerb promo codes</a>
+    <a href="https://simplycodes.com/category/hobbies-toys" tabindex="-1">Hobbies &amp; Toys coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/ediblearrangements.com" tabindex="-1">Edible Arrangements promo codes</a>
+    <a href="https://simplycodes.com/store/guitarcenter.com" tabindex="-1">Guitar Center promo codes</a>
+    <a href="https://simplycodes.com/store/hobbylobby.com" tabindex="-1">Hobby Lobby promo codes</a>
+    <a href="https://simplycodes.com/store/joann.com" tabindex="-1">Joann Fabric promo codes</a>
+    <a href="https://simplycodes.com/store/michaels.com" tabindex="-1">Michaels promo codes</a>
+    <a href="https://simplycodes.com/store/personalizationmall.com" tabindex="-1">Personalization Mall promo codes</a>
+    <a href="https://simplycodes.com/store/zazzle.com" tabindex="-1">Zazzle promo codes</a>
+    <a href="https://simplycodes.com/category/home-garden" tabindex="-1">Home &amp; Garden coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/harborfreight.com" tabindex="-1">Harbor Freight promo codes</a>
+    <a href="https://simplycodes.com/store/homedepot.com" tabindex="-1">Home Depot promo codes</a>
+    <a href="https://simplycodes.com/store/ikea.com" tabindex="-1">IKEA promo codes</a>
+    <a href="https://simplycodes.com/store/lowes.com" tabindex="-1">Lowe's promo codes</a>
+    <a href="https://simplycodes.com/store/overstock.com" tabindex="-1">Overstock promo codes</a>
+    <a href="https://simplycodes.com/store/potterybarn.com" tabindex="-1">Pottery Barn promo codes</a>
+    <a href="https://simplycodes.com/store/wayfair.com" tabindex="-1">Wayfair promo codes</a>
+    <a href="https://simplycodes.com/category/money" tabindex="-1">Money coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/aarp.org" tabindex="-1">AARP promo codes</a>
+    <a href="https://simplycodes.com/store/meetbreeze.com" tabindex="-1">Breeze promo codes</a>
+    <a href="https://simplycodes.com/store/upside.com" tabindex="-1">Upside promo codes</a>
+    <a href="https://simplycodes.com/store/westernunion.com-us-en" tabindex="-1">Western Union promo codes</a>
+    <a href="https://simplycodes.com/store/worldremit.com-en-us" tabindex="-1">WorldRemit promo codes</a>
+    <a href="https://simplycodes.com/category/pets" tabindex="-1">Pets coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/barkbox.com" tabindex="-1">BarkBox promo codes</a>
+    <a href="https://simplycodes.com/store/chewy.com" tabindex="-1">Chewy promo codes</a>
+    <a href="https://simplycodes.com/store/petco.com-shop-en-petcostore" tabindex="-1">PetCo promo codes</a>
+    <a href="https://simplycodes.com/store/1800petmeds.com" tabindex="-1">PetMeds promo codes</a>
+    <a href="https://simplycodes.com/store/petsmart.com" tabindex="-1">PetSmart promo codes</a>
+    <a href="https://simplycodes.com/store/rover.com" tabindex="-1">Rover promo codes</a>
+    <a href="https://simplycodes.com/category/shopping-related-services" tabindex="-1">Shopping coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/amazon.com" tabindex="-1">Amazon promo codes</a>
+    <a href="https://simplycodes.com/store/mercari.com" tabindex="-1">Mercari promo codes</a>
+    <a href="https://simplycodes.com/store/etsy.com" tabindex="-1">Etsy promo codes</a>
+    <a href="https://simplycodes.com/store/target.com" tabindex="-1">Target promo codes</a>
+    <a href="https://simplycodes.com/store/temu.com" tabindex="-1">Temu promo codes</a>
+    <a href="https://simplycodes.com/store/walmart.com" tabindex="-1">Walmart promo codes</a>
+    <a href="https://simplycodes.com/store/ebay.com" tabindex="-1">eBay promo codes</a>
+    <a href="https://simplycodes.com/category/software" tabindex="-1">Software coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/cvs.com-photo-photo-landing" tabindex="-1">CVS Photo promo codes</a>
+    <a href="https://simplycodes.com/store/canva.com" tabindex="-1">Canva promo codes</a>
+    <a href="https://simplycodes.com/store/nordvpn.com" tabindex="-1">NordVPN promo codes</a>
+    <a href="https://simplycodes.com/store/shutterfly.com" tabindex="-1">Shutterfly promo codes</a>
+    <a href="https://simplycodes.com/store/turbotax.intuit.com" tabindex="-1">TurboTax promo codes</a>
+    <a href="https://simplycodes.com/store/vistaprint.com" tabindex="-1">Vistaprint promo codes</a>
+    <a href="https://simplycodes.com/store/photo.walgreens.com" tabindex="-1">Walgreens Photo promo codes</a>
+    <a href="https://simplycodes.com/category/sports-outdoors" tabindex="-1">Sports &amp; Outdoors coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/backcountry.com" tabindex="-1">Backcountry promo codes</a>
+    <a href="https://simplycodes.com/store/cabelas.com" tabindex="-1">Cabela's promo codes</a>
+    <a href="https://simplycodes.com/store/carhartt.com" tabindex="-1">Carhartt promo codes</a>
+    <a href="https://simplycodes.com/store/dickssportinggoods.com" tabindex="-1">Dick's Sporting Goods promo codes</a>
+    <a href="https://simplycodes.com/store/fanatics.com" tabindex="-1">Fanatics promo codes</a>
+    <a href="https://simplycodes.com/store/rei.com" tabindex="-1">REI promo codes</a>
+    <a href="https://simplycodes.com/store/yeti.com" tabindex="-1">YETI promo codes</a>
+    <a href="https://simplycodes.com/category/places" tabindex="-1">Travel coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/airbnb.com" tabindex="-1">Airbnb promo codes</a>
+    <a href="https://simplycodes.com/store/expedia.com" tabindex="-1">Expedia promo codes</a>
+    <a href="https://simplycodes.com/store/lyft.com" tabindex="-1">Lyft promo codes</a>
+    <a href="https://simplycodes.com/store/orbitz.com" tabindex="-1">Orbitz promo codes</a>
+    <a href="https://simplycodes.com/store/priceline.com" tabindex="-1">Priceline promo codes</a>
+    <a href="https://simplycodes.com/store/turo.com" tabindex="-1">Turo promo codes</a>
+    <a href="https://simplycodes.com/store/uber.com" tabindex="-1">Uber promo codes</a>
+    <a href="https://simplycodes.com/category/blockchain-web3" tabindex="-1">Blockchain &amp; Web3 coupons &amp; promo codes</a>
+    <a href="https://simplycodes.com/store/coinbase.com" tabindex="-1">Coinbase promo codes</a>
+    <a href="https://simplycodes.com/store/ledger.com" tabindex="-1">Ledger promo codes</a>
+</div>
+    
+    <div class="visually-hidden">
+        <a href="/shop/mothers-day-coupons" tabindex="-1">Mother's Day Deals &amp; promo codes</a>
+        <a href="/shop/fathers-day-coupons" tabindex="-1">Father's Day Deals &amp; promo codes</a>
+        <a href="/shop/memorial-day-coupons" tabindex="-1">Memorial Day Deals &amp; promo codes</a>
+        <a href="/shop/halloween-coupons" tabindex="-1">Halloween Deals &amp; promo codes</a>
+        <a href="/shop/black-friday-coupons" tabindex="-1">Black Friday Deals &amp; promo codes</a>
+        <a href="/shop/cyber-monday-coupons" tabindex="-1">Cyber Monday Deals &amp; promo codes</a>
+        <a href="/shop/christmas-coupons" tabindex="-1">Christmas Deals &amp; promo codes</a>
+    </div>
+    </nav>
+
+    
+    <div class="search-overlay" id="search-overlay" aria-hidden="true"></div>
+
+    
+    <div class="search-panel" id="search-panel" role="dialog" aria-modal="true" aria-label="Search stores">
+        <div class="search-input-row">
+            
+            <button class="search-close-btn" id="search-close" aria-label="Close search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path></svg>
+            </button>
+            <div class="search-input-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#A3A6A8" aria-hidden="true"><path d="M229.66,218.34l-50.07-50.07a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.31ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+                <input type="search" class="search-input" id="search-input" placeholder="Search a store: Nike, Amazon, Sephora" autocomplete="off" spellcheck="false">
+                <button class="search-find-btn" id="search-find-btn" type="button">Find</button>
+            </div>
+        </div>
+        <div class="search-results-container" id="search-results-container">
+            
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var loaded = false;
+        var loading = false;
+        var failed = false;
+        var fallbackInitialized = false;
+        var callbacks = [];
+
+        function flushCallbacks() {
+            var pending = callbacks.slice();
+            callbacks = [];
+            pending.forEach(function (cb) {
+                try { cb(); } catch (err) { console.error('[nav-loader] callback failed', err); }
+            });
+        }
+
+        function initFallbackNavBehavior() {
+            if (fallbackInitialized) return;
+            fallbackInitialized = true;
+
+            var btn = document.querySelector('.hamburger-btn');
+            var menu = document.querySelector('.mobile-menu');
+            if (btn && menu) {
+                function closeMenu() {
+                    menu.classList.remove('open');
+                    btn.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+                btn.addEventListener('click', function () {
+                    var open = menu.classList.toggle('open');
+                    btn.classList.toggle('open', open);
+                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+                document.addEventListener('click', function (e) {
+                    if (!btn.contains(e.target) && !menu.contains(e.target)) closeMenu();
+                });
+            }
+
+            var mobileFdTrigger = document.querySelector('.mobile-fd-trigger');
+            var mobileFdCats = document.getElementById('mobile-fd-cats');
+            if (mobileFdTrigger && mobileFdCats) {
+                // Backfill basic category links from SSR desktop nav data if island never loads.
+                if (mobileFdCats.children.length === 0) {
+                    var ssrCats = document.querySelectorAll('#fd-cat-wrapper [data-slug][data-name]');
+                    ssrCats.forEach(function (el) {
+                        var slug = el.getAttribute('data-slug');
+                        var name = el.getAttribute('data-name');
+                        if (!slug || !name) return;
+                        var catLink = document.createElement('a');
+                        catLink.href = 'https://simplycodes.com/category/' + encodeURIComponent(slug);
+                        catLink.className = 'mobile-fd-merchant-link';
+                        catLink.textContent = name;
+                        catLink.target = '_blank';
+                        catLink.rel = 'noopener';
+                        mobileFdCats.appendChild(catLink);
+                    });
+                    if (ssrCats.length > 0) {
+                        var allCatsLink = document.createElement('a');
+                        allCatsLink.href = 'https://simplycodes.com/category';
+                        allCatsLink.className = 'mobile-fd-all-cats-link';
+                        allCatsLink.textContent = 'All categories \u2192';
+                        allCatsLink.target = '_blank';
+                        allCatsLink.rel = 'noopener';
+                        mobileFdCats.appendChild(allCatsLink);
+                    }
+                }
+                mobileFdTrigger.addEventListener('click', function () {
+                    var isHidden = mobileFdCats.hasAttribute('hidden');
+                    if (isHidden) {
+                        mobileFdCats.removeAttribute('hidden');
+                        mobileFdTrigger.classList.add('open');
+                        mobileFdTrigger.setAttribute('aria-expanded', 'true');
+                    } else {
+                        mobileFdCats.setAttribute('hidden', '');
+                        mobileFdTrigger.classList.remove('open');
+                        mobileFdTrigger.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        }
+
+        function loadNavIsland(onLoad) {
+            if (failed) {
+                if (typeof onLoad === 'function') onLoad();
+                return;
+            }
+            if (typeof onLoad === 'function') callbacks.push(onLoad);
+            if (loaded) {
+                flushCallbacks();
+                return;
+            }
+            if (loading) return;
+
+            loading = true;
+            var script = document.createElement('script');
+            var version = 'qkzzkl';
+            script.src = '/islands/truth-layer-nav.js' + (version ? ('?v=' + encodeURIComponent(version)) : '');
+            script.async = true;
+            script.onload = function () {
+                loaded = true;
+                loading = false;
+                flushCallbacks();
+                // Health check: if island didn't initialize, activate fallback
+                setTimeout(function () {
+                    if (!window.__truthLayerNavInit) {
+                        failed = true;
+                        initFallbackNavBehavior();
+                    }
+                }, 200);
+            };
+            script.onerror = function () {
+                loading = false;
+                failed = true;
+                callbacks = [];
+                console.error('[nav-loader] failed to load truth-layer-nav island');
+                initFallbackNavBehavior();
+            };
+            document.head.appendChild(script);
+        }
+
+        function primeOnInteraction(el) {
+            if (!el) return;
+            el.addEventListener('pointerenter', function () { loadNavIsland(); }, { once: true, passive: true });
+            el.addEventListener('touchstart', function () { loadNavIsland(); }, { once: true, passive: true });
+            el.addEventListener('focusin', function () { loadNavIsland(); }, { once: true });
+        }
+
+        function gateFirstClick(el) {
+            if (!el) return;
+            el.addEventListener('click', function onFirstClick(event) {
+                if (loaded || failed) return;
+                event.preventDefault();
+                event.stopPropagation();
+                loadNavIsland(function () {
+                    requestAnimationFrame(function () {
+                        if (el instanceof HTMLElement) el.click();
+                    });
+                });
+            }, { capture: true, once: true });
+        }
+
+        primeOnInteraction(document.querySelector('.find-deals-wrapper'));
+        primeOnInteraction(document.querySelector('.mobile-fd-trigger'));
+        primeOnInteraction(document.querySelector('.hamburger-btn'));
+
+        gateFirstClick(document.querySelector('.mobile-fd-trigger'));
+        gateFirstClick(document.querySelector('.hamburger-btn'));
+
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(function () { loadNavIsland(); }, { timeout: 3000 });
+        } else {
+            setTimeout(function () { loadNavIsland(); }, 1500);
+        }
+
+        // ── Search modal ──────────────────────────────────────────────────────
+        (function initSearch() {
+            function getStoreBase() { return window.__scStoreBase || 'https://simplycodes.com/store/'; }
+            var trigger = document.getElementById('search-trigger');
+            var closeBtn = document.getElementById('search-close');
+            var findBtn = document.getElementById('search-find-btn');
+            var overlay = document.getElementById('search-overlay');
+            var panel = document.getElementById('search-panel');
+            var input = document.getElementById('search-input');
+            var container = document.getElementById('search-results-container');
+            if (!trigger || !panel || !input || !container) return;
+
+            var popularCache = null;
+            var trendingCache = null;
+            var categoriesCache = null;
+            var debounceTimer = null;
+            var focusIndex = -1;
+
+            function escHtml(str) {
+                return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            }
+
+            function pluralize(n, word) {
+                return n === 1 ? n + ' ' + word : n + ' ' + word + 's';
+            }
+
+            // Read categories from the nav DOM (already SSR-rendered)
+            function getCategories() {
+                if (categoriesCache) return categoriesCache;
+                var cats = [];
+                document.querySelectorAll('#fd-cat-wrapper [data-slug][data-name]').forEach(function (el) {
+                    var slug = el.getAttribute('data-slug');
+                    var name = el.getAttribute('data-name');
+                    if (slug && name) cats.push({ slug: slug, name: name });
+                });
+                categoriesCache = cats.slice(0, 16);
+                return categoriesCache;
+            }
+
+            function openSearch() {
+                panel.classList.add('open');
+                overlay.classList.add('open');
+                trigger.classList.add('open');
+                trigger.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+                setTimeout(function () { input.focus(); }, 50);
+                if (!popularCache || !trendingCache) loadPreSearch();
+                else showPreSearch(popularCache, trendingCache, getCategories());
+            }
+
+            function closeSearch() {
+                panel.classList.remove('open');
+                overlay.classList.remove('open');
+                trigger.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+                input.value = '';
+                focusIndex = -1;
+            }
+
+            function renderSkeleton() {
+                var skels = '';
+                for (var i = 0; i < 6; i++) {
+                    skels += '<div class="search-skeleton-row"><div class="search-skeleton-logo"></div><div class="search-skeleton-lines"><div class="search-skeleton-line"></div><div class="search-skeleton-line short"></div></div></div>';
+                }
+                container.innerHTML = '<div class="search-loading">' + skels + '</div>';
+            }
+
+            function renderPopularCard(m) {
+                var codesText = m.codes > 0 ? pluralize(m.codes, 'code') : 'Promo codes';
+                return '<a href="' + getStoreBase() + escHtml(m.slug) + '" class="search-popular-card">' +
+                    '<div class="search-popular-name">' + escHtml(m.name) + '</div>' +
+                    '<div class="search-popular-codes">' + escHtml(codesText) + '</div>' +
+                    '</a>';
+            }
+
+            function renderTrendingItem(m) {
+                var initials = (m.name || 'SC').substring(0, 2).toUpperCase();
+                var logoHtml = m.logo
+                    ? '<img class="search-trending-logo" src="' + escHtml(m.logo) + '" alt="" loading="lazy">' +
+                      '<div class="search-trending-logo-fallback" style="display:none">' + escHtml(initials) + '</div>'
+                    : '<div class="search-trending-logo-fallback">' + escHtml(initials) + '</div>';
+                var subtext = m.averageSavings || (m.codes > 0 ? pluralize(m.codes, 'code') : '');
+                return '<a href="' + getStoreBase() + escHtml(m.slug) + '" class="search-trending-item">' +
+                    logoHtml +
+                    '<div class="search-trending-info">' +
+                    '<div class="search-trending-name">' + escHtml(m.name) + '</div>' +
+                    (subtext ? '<div class="search-trending-discount">' + escHtml(subtext) + '</div>' : '') +
+                    '</div>' +
+                    '</a>';
+            }
+
+            function showPreSearch(popular, trending, categories) {
+                var html = '<div class="search-pre-view">';
+                if (popular && popular.length) {
+                    html += '<div><div class="search-section-title">Popular stores</div>';
+                    html += '<div class="search-popular-grid">' + popular.map(renderPopularCard).join('') + '</div></div>';
+                }
+                if (trending && trending.length) {
+                    html += '<div><div class="search-section-title">Trending coupons</div>';
+                    html += '<div class="search-trending-grid">' + trending.map(renderTrendingItem).join('') + '</div></div>';
+                }
+                if (categories && categories.length) {
+                    html += '<div><div class="search-section-title">Categories</div><div class="search-cat-list">';
+                    html += categories.map(function (c) {
+                        return '<a href="https://simplycodes.com/category/' + escHtml(c.slug) + '" class="search-cat-item">' + escHtml(c.name) + '</a>';
+                    }).join('');
+                    html += '</div></div>';
+                }
+                html += '</div>';
+                container.innerHTML = html;
+            }
+
+            function loadPreSearch() {
+                renderSkeleton();
+                var catData = getCategories();
+                var popularDone = false, trendingDone = false;
+                var popData = null, trendData = null;
+
+                function tryRender() {
+                    if (popularDone && trendingDone && !input.value.trim()) {
+                        popularCache = popData || [];
+                        trendingCache = trendData || [];
+                        showPreSearch(popularCache, trendingCache, catData);
+                    }
+                }
+
+                fetch('/api/merchants/popular')
+                    .then(function (r) { return r.ok ? r.json() : { merchants: [] }; })
+                    .then(function (data) { popData = (data.merchants || []).slice(0, 8); popularDone = true; tryRender(); })
+                    .catch(function () { popData = []; popularDone = true; tryRender(); });
+
+                fetch('/api/merchants/trending')
+                    .then(function (r) { return r.ok ? r.json() : { merchants: [] }; })
+                    .then(function (data) { trendData = (data.merchants || []).slice(0, 8); trendingDone = true; tryRender(); })
+                    .catch(function () { trendData = []; trendingDone = true; tryRender(); });
+            }
+
+            function renderMerchantRow(m, idx) {
+                var initials = (m.name || 'SC').substring(0, 2).toUpperCase();
+                var logoHtml = m.logo
+                    ? '<img class="search-result-logo" src="' + escHtml(m.logo) + '" alt="" loading="lazy">' +
+                      '<div class="search-result-logo-fallback" style="display:none">' + escHtml(initials) + '</div>'
+                    : '<div class="search-result-logo-fallback">' + escHtml(initials) + '</div>';
+                var badgeClass = m.codes > 0 ? 'search-result-badge has-codes' : 'search-result-badge';
+                var badgeText = m.codes > 0 ? pluralize(m.codes, 'code') : 'Codes';
+                return '<a href="' + getStoreBase() + escHtml(m.slug) + '" class="search-result-row" data-idx="' + idx + '">' +
+                    logoHtml +
+                    '<div class="search-result-text"><div class="search-result-name">' + escHtml(m.name) + '</div></div>' +
+                    '<div class="' + badgeClass + '">' + escHtml(badgeText) + '</div>' +
+                    '</a>';
+            }
+
+            function showSearchLoading() {
+                var skels = '';
+                for (var i = 0; i < 6; i++) {
+                    skels += '<div class="search-skeleton-row"><div class="search-skeleton-logo"></div><div class="search-skeleton-lines"><div class="search-skeleton-line"></div><div class="search-skeleton-line short"></div></div></div>';
+                }
+                container.innerHTML = '<div class="search-loading">' + skels + '</div>';
+            }
+
+            function showResults(merchants, query) {
+                if (!merchants || !merchants.length) {
+                    container.innerHTML = '<div class="search-no-results">No results for &ldquo;' + escHtml(query) + '&rdquo;</div>';
+                    return;
+                }
+                container.innerHTML = merchants.map(renderMerchantRow).join('');
+            }
+
+            function doSearch(query) {
+                showSearchLoading();
+                fetch('/api/merchants/autocomplete?q=' + encodeURIComponent(query))
+                    .then(function (r) { return r.ok ? r.json() : { suggestions: [] }; })
+                    .then(function (data) { showResults(data.suggestions || [], query); })
+                    .catch(function () { container.innerHTML = '<div class="search-no-results">Search unavailable</div>'; });
+            }
+
+            function updateFocus() {
+                container.querySelectorAll('.search-result-row').forEach(function (el, i) {
+                    el.classList.toggle('focused', i === focusIndex);
+                });
+            }
+
+            trigger.addEventListener('click', function () {
+                panel.classList.contains('open') ? closeSearch() : openSearch();
+            });
+
+            // Mobile menu search button — close hamburger then open search
+            var mobileSearchBtn = document.getElementById('mobile-search-trigger');
+            if (mobileSearchBtn) {
+                mobileSearchBtn.addEventListener('click', function () {
+                    var hamburger = document.querySelector('.hamburger-btn');
+                    var mobileMenu = document.querySelector('.mobile-menu');
+                    if (hamburger && mobileMenu) {
+                        mobileMenu.classList.remove('open');
+                        hamburger.classList.remove('open');
+                        hamburger.setAttribute('aria-expanded', 'false');
+                    }
+                    openSearch();
+                });
+            }
+            closeBtn && closeBtn.addEventListener('click', closeSearch);
+            overlay.addEventListener('click', closeSearch);
+            findBtn && findBtn.addEventListener('click', function () {
+                var q = input.value.trim();
+                if (q) { clearTimeout(debounceTimer); doSearch(q); }
+                else input.focus();
+            });
+
+            input.addEventListener('input', function () {
+                var q = input.value.trim();
+                clearTimeout(debounceTimer);
+                focusIndex = -1;
+                if (!q) {
+                    if (popularCache && trendingCache) showPreSearch(popularCache, trendingCache, getCategories());
+                    return;
+                }
+                debounceTimer = setTimeout(function () { doSearch(q); }, 280);
+            });
+
+            input.addEventListener('keydown', function (e) {
+                var rows = container.querySelectorAll('.search-result-row');
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    focusIndex = Math.min(focusIndex + 1, rows.length - 1);
+                    updateFocus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    focusIndex = Math.max(focusIndex - 1, -1);
+                    updateFocus();
+                } else if (e.key === 'Enter' && focusIndex >= 0 && rows[focusIndex]) {
+                    e.preventDefault();
+                    rows[focusIndex].click();
+                } else if (e.key === 'Escape') {
+                    closeSearch();
+                }
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && panel.classList.contains('open')) closeSearch();
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    panel.classList.contains('open') ? closeSearch() : openSearch();
+                }
+            });
+        })();
+        // ── End search modal ──────────────────────────────────────────────────
+    })();
+
+    // Delegated image-error handler for search result logos (replaces inline onerror)
+    document.addEventListener('error', function(e) {
+        var t = e.target;
+        if (t.tagName === 'IMG' && (t.closest('.search-trending-item') || t.closest('.search-result-row'))) {
+            t.style.display = 'none';
+            var fb = t.nextElementSibling;
+            if (fb) fb.style.display = 'flex';
+        }
+    }, true);
+
+    // Swap search placeholder to shorter text on mobile
+    if (window.innerWidth < 768) {
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-short-placeholder]').forEach(function(el) {
+                el.placeholder = el.getAttribute('data-short-placeholder');
+            });
+        });
+    }
+    </script>
+
+
+    <aside aria-label="Affiliate disclosure" style="
+      background:var(--surface-layer,#101013);
+      border-bottom:1px solid var(--border-secondary,#333338);
+      width:100%;
+      padding:7px 16px;
+      text-align:center;
+      color:var(--text-tertiary,#a1a1aa);
+      font-size:11px;
+      line-height:16px;
+    ">
+      <p style="margin:0;">
+        SimplyCodes may earn commission on purchases.
+        <a href="https://simplycodes.com/terms" style="text-decoration:underline;color:var(--text-secondary,#d4d4d8);" aria-label="Learn more about commission and our Terms of Use">Learn more</a>
+      </p>
+    </aside>
+
+    <main>
+      
+      <section class="ci-hero" aria-labelledby="ci-hero-heading">
+        <div class="ci-container ci-hero-content">
+          <h1 id="ci-hero-heading" tabindex="-1" class="ci-hero-title">Coupon codes &amp; deals by category</h1>
+          <p class="ci-atomic">
+            SimplyCodes organizes <strong>1.1M verified coupon codes</strong> from <strong>648K merchants</strong> across <strong>19 top categories</strong> and <strong>200+ sub-categories</strong>, each tested by our three-layer verification engine.
+          </p>
+
+          
+          <div class="ci-briefing" aria-label="Top categories by merchant coverage">
+            <div class="ci-briefing-header">
+              <span class="ci-briefing-label" aria-hidden="true">◆ TOP CATEGORIES</span>
+              <span class="ci-briefing-date">By merchant coverage</span>
+            </div>
+            <div class="ci-briefing-items"><a class="ci-briefing-item" href="/category/fashion" data-track="top_category_click" data-section="top_categories" data-param-category="fashion">
+              <i class="ph ph-t-shirt ci-briefing-icon" aria-hidden="true"></i>
+              <span class="ci-briefing-cat">Apparel</span>
+              <span class="ci-briefing-stat">106,789 merchants</span>
+            </a><a class="ci-briefing-item" href="/category/home-garden" data-track="top_category_click" data-section="top_categories" data-param-category="home-garden">
+              <i class="ph ph-house-line ci-briefing-icon" aria-hidden="true"></i>
+              <span class="ci-briefing-cat">Home &amp; Garden</span>
+              <span class="ci-briefing-stat">88,243 merchants</span>
+            </a><a class="ci-briefing-item" href="/category/health" data-track="top_category_click" data-section="top_categories" data-param-category="health">
+              <i class="ph ph-pill ci-briefing-icon" aria-hidden="true"></i>
+              <span class="ci-briefing-cat">Health</span>
+              <span class="ci-briefing-stat">59,917 merchants</span>
+            </a><a class="ci-briefing-item" href="/category/software" data-track="top_category_click" data-section="top_categories" data-param-category="software">
+              <i class="ph ph-code ci-briefing-icon" aria-hidden="true"></i>
+              <span class="ci-briefing-cat">Software</span>
+              <span class="ci-briefing-stat">46,438 merchants</span>
+            </a></div>
+          </div>
+
+          <div class="ci-tiles" aria-label="Category statistics">
+            <div class="ci-tile">
+              <span class="ci-tile-val">19</span>
+              <span class="ci-tile-label">Top categories</span>
+            </div>
+            <div class="ci-tile">
+              <span class="ci-tile-val">200+</span>
+              <span class="ci-tile-label">Sub-categories</span>
+            </div>
+            <div class="ci-tile">
+              <span class="ci-tile-val">648K</span>
+              <span class="ci-tile-label">Merchants tracked</span>
+            </div>
+            <div class="ci-tile">
+              <span class="ci-tile-val">1.1M</span>
+              <span class="ci-tile-label">Verified codes</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
+      <section class="ci-section" aria-labelledby="ci-categories-heading">
+        <div class="ci-container">
+          <div class="ci-section-label" aria-hidden="true">◆ ALL CATEGORIES</div>
+          <h2 id="ci-categories-heading" class="ci-section-title">Which categories have verified deals right now?</h2>
+          <p class="ci-section-answer">
+            <strong>All 19 top categories have active verified codes.</strong> Click any category to see the best deal today, the full merchant list, and the sub-categories that matter.
+          </p>
+          <div class="ci-categories-grid">
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/fashion">
+    <i class="ph ph-t-shirt ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Apparel</div>
+      <div class="ci-cat-meta">106,789 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/fashion/clothes">Clothes</a><a class="ci-cat-child" href="/category/fashion/accessories">Fashion Accessories</a><a class="ci-cat-child" href="/category/fashion/fashion-retailers">Fashion Retailers</a><a class="ci-cat-child" href="/category/fashion/shoes">Shoes</a><a class="ci-cat-child" href="/category/fashion/workwear">Work Clothing</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/artificial-intelligence">
+    <i class="ph ph-robot ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Artificial Intelligence</div>
+      <div class="ci-cat-meta">19,741 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/artificial-intelligence/creative-ai-tools">Creative AI Tools</a><a class="ci-cat-child" href="/category/artificial-intelligence/ai-detection">AI Detectors</a><a class="ci-cat-child" href="/category/artificial-intelligence/business-ai-tools">AI Business Tools</a><a class="ci-cat-child" href="/category/artificial-intelligence/conversational-ai">Conversational Intelligence Software</a><a class="ci-cat-child" href="/category/artificial-intelligence/ai-content-creation">AI Content Creation</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/automotive">
+    <i class="ph ph-car-profile ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Automotive</div>
+      <div class="ci-cat-meta">16,031 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/automotive/auto-replacement-parts">Auto Replacement Parts</a><a class="ci-cat-child" href="/category/automotive/car-care">Car Care</a><a class="ci-cat-child" href="/category/automotive/auto-performance-parts-accessories">Auto Performance Parts &amp; Accessories</a><a class="ci-cat-child" href="/category/automotive/motorcycles-powersports">Motorcycles</a><a class="ci-cat-child" href="/category/automotive/auto-resources-services">Auto Resources &amp; Services</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/beauty">
+    <i class="ph ph-sparkle ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Beauty</div>
+      <div class="ci-cat-meta">45,210 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/beauty/skin-care">Skin Health</a><a class="ci-cat-child" href="/category/beauty/hair-care">Hair Products</a><a class="ci-cat-child" href="/category/beauty/makeup">Cosmetics</a><a class="ci-cat-child" href="/category/beauty/nail-care">Manicures</a><a class="ci-cat-child" href="/category/beauty/fragrances">Scents</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/blockchain-web3">
+    <i class="ph ph-cube ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Blockchain &amp; Web3</div>
+      <div class="ci-cat-meta">10,199 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/blockchain-web3/cryptocurrency-software">Cryptocurrency Software</a><a class="ci-cat-child" href="/category/blockchain-web3/nfts">NFTs</a><a class="ci-cat-child" href="/category/blockchain-web3/defi">Decentralized Finance</a><a class="ci-cat-child" href="/category/blockchain-web3/decentralized-applications">DApps</a><a class="ci-cat-child" href="/category/blockchain-web3/cryptocurrencies">Cryptocurrencies</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/business">
+    <i class="ph ph-briefcase ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Business</div>
+      <div class="ci-cat-meta">16,626 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/business/office-supplies">School Supplies</a><a class="ci-cat-child" href="/category/business/administrative-services">Administrative Services</a><a class="ci-cat-child" href="/category/business/construction-supplies-services">Construction Supplies &amp; Services</a><a class="ci-cat-child" href="/category/business/retail-fixtures-supplies">Retail Fixtures &amp; Supplies</a><a class="ci-cat-child" href="/category/business/executive-coaching">Executive Coaching</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/career-learning">
+    <i class="ph ph-graduation-cap ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Education</div>
+      <div class="ci-cat-meta">10,096 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/career-learning/educational-resources">Educational Resources</a><a class="ci-cat-child" href="/category/career-learning/professional-development-skills-training">Professional Development &amp; Skills Training</a><a class="ci-cat-child" href="/category/career-learning/k-12-education">K-12 Education</a><a class="ci-cat-child" href="/category/career-learning/higher-education">Higher Education</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/devices">
+    <i class="ph ph-laptop ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Electronics</div>
+      <div class="ci-cat-meta">25,624 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/devices/smart-home">Smart Home Devices</a><a class="ci-cat-child" href="/category/devices/audio">Audio Products</a><a class="ci-cat-child" href="/category/devices/wearable-technology">Wearable Technology</a><a class="ci-cat-child" href="/category/devices/computers-accessories">Laptops</a><a class="ci-cat-child" href="/category/devices/cell-phones-accessories">Mobile phones</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/online">
+    <i class="ph ph-television-simple ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Entertainment</div>
+      <div class="ci-cat-meta">28,123 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/online/events">Events</a><a class="ci-cat-child" href="/category/online/books">Books</a><a class="ci-cat-child" href="/category/online/entertainment-attractions">Entertainment Attractions</a><a class="ci-cat-child" href="/category/online/videogames">Gaming</a><a class="ci-cat-child" href="/category/online/gambling">Gambling</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/food-restaurants">
+    <i class="ph ph-fork-knife ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Food &amp; Restaurants</div>
+      <div class="ci-cat-meta">44,387 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/food-restaurants/beverages">Beverages</a><a class="ci-cat-child" href="/category/food-restaurants/restaurants">Restaurants</a><a class="ci-cat-child" href="/category/food-restaurants/grocery-stores">Grocery &amp; Supermarkets</a><a class="ci-cat-child" href="/category/food-restaurants/food-ingredients">Food &amp; Ingredients</a><a class="ci-cat-child" href="/category/food-restaurants/food-drink-subscriptions">Food &amp; Drink Subscriptions</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/health">
+    <i class="ph ph-pill ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Health</div>
+      <div class="ci-cat-meta">59,917 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/health/wellness">Wellness Products</a><a class="ci-cat-child" href="/category/health/medical-supplies">Medical Equipment</a><a class="ci-cat-child" href="/category/health/oral-care">Dental Care</a><a class="ci-cat-child" href="/category/health/alternative-medicine">Alternative Remedies</a><a class="ci-cat-child" href="/category/health/vision-care">Optics</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/hobbies-toys">
+    <i class="ph ph-puzzle-piece ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Hobbies &amp; Toys</div>
+      <div class="ci-cat-meta">45,674 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/hobbies-toys/gifts">Gift Ideas</a><a class="ci-cat-child" href="/category/hobbies-toys/collectibles">Collectibles</a><a class="ci-cat-child" href="/category/hobbies-toys/toys1">Toys</a><a class="ci-cat-child" href="/category/hobbies-toys/hobbies">Hobbies</a><a class="ci-cat-child" href="/category/hobbies-toys/arts-crafts">Arts &amp; Crafts</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/home-garden">
+    <i class="ph ph-house-line ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Home &amp; Garden</div>
+      <div class="ci-cat-meta">88,243 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/home-garden/homeimprovement">Home Improvement Tools</a><a class="ci-cat-child" href="/category/home-garden/home-decor">Home Decor</a><a class="ci-cat-child" href="/category/home-garden/furniture">Furnishings</a><a class="ci-cat-child" href="/category/home-garden/baby">Baby Products</a><a class="ci-cat-child" href="/category/home-garden/bed-bath">Bed &amp; Bath</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/money">
+    <i class="ph ph-currency-dollar ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Money</div>
+      <div class="ci-cat-meta">9,530 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/money/insurance">Insurance Policies</a><a class="ci-cat-child" href="/category/money/banking">Banking</a><a class="ci-cat-child" href="/category/money/charities-fundraising">Donations</a><a class="ci-cat-child" href="/category/money/investing-trading">Stocks</a><a class="ci-cat-child" href="/category/money/financial-management">Money Management</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/pets">
+    <i class="ph ph-paw-print ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Pets</div>
+      <div class="ci-cat-meta">14,971 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/pets/pet-supplies">Pet Products</a><a class="ci-cat-child" href="/category/pets/dog-care">Dog Care</a><a class="ci-cat-child" href="/category/pets/pet-services">Pet Assistance</a><a class="ci-cat-child" href="/category/pets/horse-care">Horse Supplies</a><a class="ci-cat-child" href="/category/pets/fish-aquatic-pet-care">Uncommon Pets</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/shopping-related-services">
+    <i class="ph ph-shopping-bag ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Shopping</div>
+      <div class="ci-cat-meta">12,119 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/shopping-related-services/ecommerce-stores">Ecommerce Stores</a><a class="ci-cat-child" href="/category/shopping-related-services/marketplaces">Marketplaces</a><a class="ci-cat-child" href="/category/shopping-related-services/general-merchandise-retailers">Big Box Stores</a><a class="ci-cat-child" href="/category/shopping-related-services/auctions">Auctions</a><a class="ci-cat-child" href="/category/shopping-related-services/coupons-rewards">Coupons &amp; Rewards</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/software">
+    <i class="ph ph-code ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Software</div>
+      <div class="ci-cat-meta">46,438 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/software/business-solutions">Business Solutions</a><a class="ci-cat-child" href="/category/software/website-development">Website Tooling</a><a class="ci-cat-child" href="/category/software/marketing-tools">Marketing Tools</a><a class="ci-cat-child" href="/category/software/software-utilities">Software Utilities</a><a class="ci-cat-child" href="/category/software/communication-software">Communication Software</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/sports-outdoors">
+    <i class="ph ph-soccer-ball ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Sports &amp; Outdoors</div>
+      <div class="ci-cat-meta">31,523 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/sports-outdoors/sporting-goods">Sporting Goods</a><a class="ci-cat-child" href="/category/sports-outdoors/team-sports">Team Sports</a><a class="ci-cat-child" href="/category/sports-outdoors/hunting">Hunting</a><a class="ci-cat-child" href="/category/sports-outdoors/cycling">Biking</a><a class="ci-cat-child" href="/category/sports-outdoors/water-sports">Water Sports</a></div>
+  </div>
+</div>
+<div class="ci-category-card">
+  <a class="ci-cat-l1" href="/category/places">
+    <i class="ph ph-airplane ci-cat-icon" aria-hidden="true"></i>
+    <div class="ci-cat-l1-text">
+      <div class="ci-cat-name">Travel</div>
+      <div class="ci-cat-meta">16,733 merchants</div>
+    </div>
+    <i class="ph ph-arrow-right ci-cat-arrow" aria-hidden="true"></i>
+  </a>
+  <div>
+    <div class="ci-cat-children-label">Sub-categories</div>
+    <div class="ci-cat-children"><a class="ci-cat-child" href="/category/places/lodging">Lodging</a><a class="ci-cat-child" href="/category/places/travel-services">Travel Bookings</a><a class="ci-cat-child" href="/category/places/transportation">Transportation</a><a class="ci-cat-child" href="/category/places/air-travel">Air Transit</a><a class="ci-cat-child" href="/category/places/cruises">Cruises</a></div>
+  </div>
+</div>
+</div>
+        </div>
+      </section>
+
+      
+      <section class="ci-section" aria-labelledby="ci-trending-heading" style="content-visibility:auto;contain-intrinsic-size:0 500px">
+        <div class="ci-container">
+          <div class="ci-section-label" aria-hidden="true">◆ TRENDING NOW</div>
+          <h2 id="ci-trending-heading" class="ci-section-title">Most popular codes right now</h2>
+          <p class="ci-section-answer">Top-verified codes from our community, updated daily.</p>
+          <div class="ci-trending-grid">
+            <a class="ci-trending-card" href="/store/youngla.com" data-track="trending_card_click" data-section="trending">
+  <div class="ci-trending-logo"><img src="https://cdn.simplycodes.com/images/logo/youngla.jpg" alt="" width="60" height="60" loading="lazy"></div>
+  <div class="ci-trending-info">
+    <div class="ci-trending-name">YoungLA</div>
+    <div class="ci-trending-discount">15% OFF</div>
+    <div class="ci-trending-meta">
+      <span class="ci-trending-verified">Verified by 1,255 shoppers</span>
+      <span class="ci-sitewide-badge">Sitewide</span>
+    </div>
+  </div>
+</a>
+<a class="ci-trending-card" href="/store/paranormalcirque.com" data-track="trending_card_click" data-section="trending">
+  <div class="ci-trending-logo"><img src="https://cdn.simplycodes.com/images/logo/paranormalcirque.jpg" alt="" width="60" height="60" loading="lazy"></div>
+  <div class="ci-trending-info">
+    <div class="ci-trending-name">Paranormal Cirque</div>
+    <div class="ci-trending-discount">20% OFF</div>
+    <div class="ci-trending-meta">
+      <span class="ci-trending-verified">Verified by 641 shoppers</span>
+      <span class="ci-sitewide-badge">Sitewide</span>
+    </div>
+  </div>
+</a>
+<a class="ci-trending-card" href="/store/beyondbody.me" data-track="trending_card_click" data-section="trending">
+  <div class="ci-trending-logo"><img src="https://cdn.simplycodes.com/images/logo/beyondbody.jpg" alt="" width="60" height="60" loading="lazy"></div>
+  <div class="ci-trending-info">
+    <div class="ci-trending-name">Beyond Body</div>
+    <div class="ci-trending-discount">74% OFF</div>
+    <div class="ci-trending-meta">
+      <span class="ci-trending-verified">Verified by 523 shoppers</span>
+      <span class="ci-sitewide-badge">Sitewide</span>
+    </div>
+  </div>
+</a>
+<a class="ci-trending-card" href="/store/4imprint.com" data-track="trending_card_click" data-section="trending">
+  <div class="ci-trending-logo"><img src="https://cdn.simplycodes.com/images/logo/4imprint.jpg" alt="" width="60" height="60" loading="lazy"></div>
+  <div class="ci-trending-info">
+    <div class="ci-trending-name">4imprint</div>
+    <div class="ci-trending-discount">$25 OFF</div>
+    <div class="ci-trending-meta">
+      <span class="ci-trending-verified">Verified by 533 shoppers</span>
+      <span class="ci-sitewide-badge">Sitewide</span>
+    </div>
+  </div>
+</a>
+<a class="ci-trending-card" href="/store/wanderprints.com" data-track="trending_card_click" data-section="trending">
+  <div class="ci-trending-logo"><img src="https://cdn.simplycodes.com/images/logo/wanderprints.jpg" alt="" width="60" height="60" loading="lazy"></div>
+  <div class="ci-trending-info">
+    <div class="ci-trending-name">Wander Prints</div>
+    <div class="ci-trending-discount">15% OFF</div>
+    <div class="ci-trending-meta">
+      <span class="ci-trending-verified">Verified by 372 shoppers</span>
+      <span class="ci-sitewide-badge">Sitewide</span>
+    </div>
+  </div>
+</a>
+<a class="ci-trending-card" href="/store/macorner.co" data-track="trending_card_click" data-section="trending">
+  <div class="ci-trending-logo"><img src="https://cdn.simplycodes.com/images/logo/macorner.jpg" alt="" width="60" height="60" loading="lazy"></div>
+  <div class="ci-trending-info">
+    <div class="ci-trending-name">Macorner</div>
+    <div class="ci-trending-discount">15% OFF</div>
+    <div class="ci-trending-meta">
+      <span class="ci-trending-verified">Verified by 463 shoppers</span>
+      <span class="ci-sitewide-badge">Sitewide</span>
+    </div>
+  </div>
+</a>
+          </div>
+        </div>
+      </section>
+
+      
+      <section class="ci-section" aria-labelledby="ci-featured-heading" style="content-visibility:auto;contain-intrinsic-size:0 600px">
+        <div class="ci-container">
+          <div class="ci-section-label" aria-hidden="true">◆ POPULAR STORES</div>
+          <h2 id="ci-featured-heading" class="ci-section-title">Popular stores with active codes</h2>
+          <p class="ci-section-answer">Stores our community saves with most. All codes verified before you copy.</p>
+          <div class="ci-pl-grid">
+            <a class="ci-pl-row" href="/store/harborfreight.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/harborfreightcom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Harbor Freight</span>
+    <span class="ci-pl-codes">64 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/vistaprint.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/vistaprintcom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Vistaprint</span>
+    <span class="ci-pl-codes">21 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/fashionnova.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/fashionnova.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Fashion Nova</span>
+    <span class="ci-pl-codes">16 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/quince.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/quince.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Quince</span>
+    <span class="ci-pl-codes">13 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/us.shein.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/sheincom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">SHEIN</span>
+    <span class="ci-pl-codes">11 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/temu.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/temu.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Temu</span>
+    <span class="ci-pl-codes">11 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/mercari.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/mercaricom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Mercari</span>
+    <span class="ci-pl-codes">11 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/jiffylube.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/jiffylubecom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Jiffy Lube</span>
+    <span class="ci-pl-codes">9 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/walgreens.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/walgreenscom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Walgreens</span>
+    <span class="ci-pl-codes">9 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/nespresso.com-us-en" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/nespressocom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Nespresso</span>
+    <span class="ci-pl-codes">9 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/planetfitness.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/planetfitnesscom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Planet Fitness</span>
+    <span class="ci-pl-codes">9 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/crocs.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/crocs.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Crocs</span>
+    <span class="ci-pl-codes">8 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/kohls.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/kohlscom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Kohl's</span>
+    <span class="ci-pl-codes">7 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/chewy.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/chewy.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Chewy</span>
+    <span class="ci-pl-codes">6 active codes</span>
+  </span>
+</a>
+<a class="ci-pl-row" href="/store/spirithalloween.com" data-track="featured_card_click" data-section="featured">
+  <div class="ci-pl-logo"><img src="https://cdn.simplycodes.com/images/logo/spirithalloweencom.jpg" alt="" width="40" height="40" loading="lazy"></div>
+  <span class="ci-pl-meta">
+    <span class="ci-pl-name">Spirit Halloween</span>
+    <span class="ci-pl-codes">6 active codes</span>
+  </span>
+</a>
+          </div>
+          <div class="ci-featured-cta-wrap">
+            <a class="ci-featured-cta-link" href="/stores" data-track="browse_all_stores" data-section="featured" data-param-cta_text="Browse all stores">
+              Browse all 648K+ stores
+              <i class="ph ph-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      
+      <section class="ci-section" aria-labelledby="ci-faq-heading" style="content-visibility:auto;contain-intrinsic-size:0 400px">
+        <div class="ci-container">
+          <div class="ci-section-label" aria-hidden="true">◆ FAQ</div>
+          <h2 id="ci-faq-heading" class="ci-section-title">Frequently asked questions</h2>
+          <p class="ci-section-answer">Common questions about finding and using coupon codes at SimplyCodes, by category.</p>
+          <div class="ci-faq-list">
+            <div class="ci-faq-item">
+              <div class="ci-faq-q">What can I find at SimplyCodes by category?</div>
+              <p class="ci-faq-a">SimplyCodes organizes verified coupon codes across 19 top categories and 200+ sub-categories — spanning fashion, electronics, home, travel, automotive, and more. Every code is tested by our three-layer verification engine.</p>
+            </div>
+            <div class="ci-faq-item">
+              <div class="ci-faq-q">Which categories have the most active deals right now?</div>
+              <p class="ci-faq-a">The most active categories include Apparel, Electronics, Home &amp; Garden. All 19 top categories have active verified codes at any given time.</p>
+            </div>
+            <div class="ci-faq-item">
+              <div class="ci-faq-q">How does SimplyCodes verify coupon codes?</div>
+              <p class="ci-faq-a">Every code is tested by our three-layer verification engine: a live checkout test on the merchant site, community confirmation from real shoppers, and ongoing code health monitoring. Codes display a Health Score and a verified-by-shopper count, so you pick the most reliable code before you copy.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="section-separator" aria-hidden="true"></div>
+
+    <footer>
+        <div class="footer-inner">
+
+            
+
+            
+            <div class="footer-brand-col">
+                <div class="footer-logo">SimplyCodes</div>
+                
+                
+                <p class="footer-brand-desc">The coupon code verification engine. 648K+ stores tracked. Every code we list shows its own check history, and says so when there is none.</p>
+
+                <ul class="footer-social-icons" aria-label="Follow SimplyCodes on social media">
+                    <li>
+                        <a href="https://www.facebook.com/simplycodes/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,128a104.16,104.16,0,0,1-91.55,103.26,4,4,0,0,1-4.45-4V152h24a8,8,0,0,0,8-8.53,8.17,8.17,0,0,0-8.25-7.47H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,8-8.53A8.17,8.17,0,0,0,167.73,80H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0-8,8.53A8.17,8.17,0,0,0,96.27,152H120v75.28a4,4,0,0,1-4.44,4A104.15,104.15,0,0,1,24.07,124.09c2-54,45.74-97.9,99.78-100A104.12,104.12,0,0,1,232,128Z"></path></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://x.com/simplycodesHQ" target="_blank" rel="noopener noreferrer" aria-label="X.com">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M218.12,209.56l-61-95.8,59.72-65.69a12,12,0,0,0-17.76-16.14L143.81,92.77,106.12,33.56A12,12,0,0,0,96,28H48A12,12,0,0,0,37.88,46.44l61,95.8L39.12,207.93a12,12,0,1,0,17.76,16.14l55.31-60.84,37.69,59.21A12,12,0,0,0,160,228h48a12,12,0,0,0,10.12-18.44ZM166.59,204,69.86,52H89.41l96.73,152Z"></path></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/simplycodeshq" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z"></path></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/showcase/simplycodes/?trk=affiliated-pages" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,24H40A16,16,0,0,0,24,40V216a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V40A16,16,0,0,0,216,24ZM96,176a8,8,0,0,1-16,0V112a8,8,0,0,1,16,0ZM88,96a12,12,0,1,1,12-12A12,12,0,0,1,88,96Zm96,80a8,8,0,0,1-16,0V140a20,20,0,0,0-40,0v36a8,8,0,0,1-16,0V112a8,8,0,0,1,15.79-1.78A36,36,0,0,1,184,140Z"></path></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/channel/UC9FXhtoWU6COFs3S96us87w" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M234.33,69.52a24,24,0,0,0-14.49-16.4C185.56,39.88,131,40,128,40s-57.56-.12-91.84,13.12a24,24,0,0,0-14.49,16.4C19.08,79.5,16,97.74,16,128s3.08,48.5,5.67,58.48a24,24,0,0,0,14.49,16.41C69,215.56,120.4,216,127.34,216h1.32c6.94,0,58.37-.44,91.18-13.11a24,24,0,0,0,14.49-16.41c2.59-10,5.67-28.22,5.67-58.48S236.92,79.5,234.33,69.52Zm-73.74,65-40,28A8,8,0,0,1,108,156V100a8,8,0,0,1,12.59-6.55l40,28a8,8,0,0,1,0,13.1Z"></path></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.tiktok.com/@simplycodeshq" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                            
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,80v40a8,8,0,0,1-8,8,103.25,103.25,0,0,1-48-11.71V156a76,76,0,0,1-152,0c0-36.9,26.91-69.52,62.6-75.88A8,8,0,0,1,96,88v42.69a8,8,0,0,1-4.57,7.23A20,20,0,1,0,120,156V24a8,8,0,0,1,8-8h40a8,8,0,0,1,8,8,48.05,48.05,0,0,0,48,48A8,8,0,0,1,232,80Z"></path></svg>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="footer-store-badges">
+                    
+                    <a href="/go/extension" class="store-badge-link store-badge-desktop-only" id="sc-ext-badge" target="_blank" rel="noopener noreferrer" aria-label="Add SimplyCodes to your browser" data-track="footer_link_click" data-section="footer_store_badges">
+                        <img id="sc-ext-badge-img" src="https://cdn.simplycodes.com/web/images/footer/chrome.jpg" alt="Add SimplyCodes to your browser" loading="lazy" width="276" height="80" style="height:30px;width:auto;border-radius:6px;display:block;">
+                    </a>
+                    <script>
+                    (function(){
+                      var ua=navigator.userAgent.toLowerCase();
+                      var g=/iphone|ipad|ipod/.test(ua)?'ios':
+                            /android/.test(ua)?'android':
+                            /edg\//.test(ua)?'edge':
+                            /firefox\//.test(ua)?'firefox':
+                            /safari\//.test(ua)&&!/chrome\//.test(ua)?'ios':
+                            'chrome';
+                      var link=document.getElementById('sc-ext-badge');
+                      if(!link)return;
+                      if(g==='ios'||g==='android'){link.style.display='none';return;}
+                      if(g!=='chrome'){
+                        var img=document.getElementById('sc-ext-badge-img');
+                        if(img){
+                          img.src='https://cdn.simplycodes.com/web/images/footer/'+g+'.jpg';
+                          img.alt='Download Extension for '+(g==='edge'?'Edge':'Firefox');
+                          img.width=274;
+                        }
+                      }
+                    })();
+                    </script>
+                    
+                    <a href="https://apps.apple.com/us/app/simplycodes-coupons-rewards/id1538885494" target="_blank" rel="noopener noreferrer" class="store-badge-link" aria-label="Download App for iOS" data-track="footer_link_click" data-section="footer_store_badges">
+                        <img src="https://cdn.simplycodes.com/web/images/footer/app-store-badge.png" alt="Download on the App Store" loading="lazy" width="499" height="167" style="height:30px;width:auto;display:block;">
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=com.simplycodes.mobile" target="_blank" rel="noopener noreferrer" class="store-badge-link" aria-label="Download App for Android" data-track="footer_link_click" data-section="footer_store_badges">
+                        <img src="https://cdn.simplycodes.com/web/images/footer/play-store-badge.png" alt="Get it on Google Play" loading="lazy" width="564" height="168" style="height:30px;width:auto;display:block;">
+                    </a>
+                </div>
+
+                
+            </div>
+
+            
+            <div class="footer-col">
+                <h3 class="footer-col-heading"><button class="footer-col-title" aria-controls="footer-links-stores">Popular Stores</button></h3>
+                <ul class="footer-col-links" id="footer-links-stores">
+                    <li><a href="/store/nike.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="nike">Nike</a></li>
+                    <li><a href="/store/amazon.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="amazon">Amazon</a></li>
+                    <li><a href="/store/ubereats.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="uber_eats">Uber Eats</a></li>
+                    <li><a href="/store/doordash.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="doordash">DoorDash</a></li>
+                    <li><a href="/store/sephora.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="sephora">Sephora</a></li>
+                    <li><a href="/store/target.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="target">Target</a></li>
+                    <li><a href="/store/kohls.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="kohls">Kohl's</a></li>
+                    <li><a href="/store/bestbuy.com" data-track="footer_link_click" data-section="footer_stores" data-param-link_text="best_buy">Best Buy</a></li>
+                </ul>
+            </div>
+
+            
+            <div class="footer-col footer-col--multi">
+                <h3 class="footer-col-heading"><button class="footer-col-title" aria-controls="footer-links-products">Products</button></h3>
+                <ul class="footer-col-links" id="footer-links-products">
+                    <li><a href="/extension" data-track="footer_link_click" data-section="footer_products" data-param-link_text="browser_extension">Browser Extension</a></li>
+                    <li><a href="/app" data-track="footer_link_click" data-section="footer_products" data-param-link_text="mobile_app">Mobile App</a></li>
+                </ul>
+                <h3 class="footer-col-heading"><button class="footer-col-title footer-col-title--sub" aria-controls="footer-links-verify">How We Verify</button></h3>
+                <ul class="footer-col-links" id="footer-links-verify">
+                    <li><a href="/how-it-works" data-track="footer_link_click" data-section="footer_verify" data-param-link_text="how_it_works">How It Works</a></li>
+                    <li><a href="/how-we-make-money" data-track="footer_link_click" data-section="footer_verify" data-param-link_text="how_we_make_money">How We Make Money</a></li>
+                    <li><a href="/verification-live" data-track="footer_link_click" data-section="footer_verify" data-param-link_text="live_verification_feed">Live Verification Feed</a></li>
+                    <li><a href="/blog" data-track="footer_link_click" data-section="footer_verify" data-param-link_text="blog">Blog</a></li>
+                </ul>
+            </div>
+
+            
+            <div class="footer-col">
+                <h3 class="footer-col-heading"><button class="footer-col-title" aria-controls="footer-links-resources">Resources</button></h3>
+                <ul class="footer-col-links" id="footer-links-resources">
+                    <li><a href="/search" data-track="footer_link_click" data-section="footer_resources" data-param-link_text="search_stores">Search Stores</a></li>
+                    <li><a href="/blog/state-of-coupon-codes-2026" data-track="footer_link_click" data-section="footer_resources" data-param-link_text="state_of_coupons_report">State of Coupons Report</a></li>
+                    <li><a href="/blog/best-coupon-app-extension" data-track="footer_link_click" data-section="footer_resources" data-param-link_text="simplycodes_vs_honey">SimplyCodes vs Honey</a></li>
+                    <li><a href="/feature/common-coupon-phrases" data-track="footer_link_click" data-section="footer_resources" data-param-link_text="common_coupon_phrases">Most Common Coupon Phrases</a></li>
+                    <li><a href="/blog/top-100-retailers-promo-codes-2026" data-track="footer_link_click" data-section="footer_resources" data-param-link_text="merchant_score_index">Merchant Score Index</a></li>
+                    
+                </ul>
+            </div>
+
+            
+            <div class="footer-col">
+                <h3 class="footer-col-heading"><button class="footer-col-title" aria-controls="footer-links-company">Company</button></h3>
+                <ul class="footer-col-links" id="footer-links-company">
+                    <li><a href="/about" data-track="footer_link_click" data-section="footer_company" data-param-link_text="about">About SimplyCodes</a></li>
+                    <li><a href="/help" data-track="footer_link_click" data-section="footer_company" data-param-link_text="help_center">Help Center</a></li>
+                    <li><a href="https://simplycodes.com/contact" data-track="footer_link_click" data-section="footer_company" data-param-link_text="contact_us">Contact Us</a></li>
+                    <li><a href="https://simplycodes.com/privacy" data-track="footer_link_click" data-section="footer_company" data-param-link_text="privacy">Privacy</a></li>
+                    <li><a href="https://simplycodes.com/terms" target="_blank" rel="noopener noreferrer" data-track="footer_link_click" data-section="footer_company" data-param-link_text="terms">Terms</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        
+        <div class="footer-pai-section">
+            <span class="footer-pai-lockup" aria-hidden="true">
+                <span class="footer-pai-diamond"></span>
+            </span>
+            <div class="footer-pai-text">
+                <div class="footer-pai-label">SimplyCodes, a Product.ai company.</div>
+                <div class="footer-pai-desc">Our verification engine is powered by the same adversarial intelligence system behind Product.ai — The Truth Layer for Commerce.</div>
+            </div>
+            <a href="https://product.ai/" class="footer-pai-link" target="_blank" rel="noopener noreferrer">product.ai <span aria-hidden="true">↗</span></a>
+        </div>
+
+        
+        <div class="footer-legal">
+            <p class="footer-legal-copy">
+                © 2026 <a href="https://product.ai/" target="_blank" rel="noopener noreferrer">Product.ai</a>. All rights reserved.
+                <span class="footer-stat-sep" aria-hidden="true">·</span>
+                <span class="footer-merchant-stat">648K+ stores with verified codes.</span>
+            </p>
+            <ul class="footer-legal-links">
+                <li><a href="https://simplycodes.com/privacy" data-track="footer_link_click" data-section="footer_legal">Privacy policy</a></li>
+                <li class="sep">·</li>
+                <li><a href="https://simplycodes.com/terms" data-track="footer_link_click" data-section="footer_legal">Terms of Use</a></li>
+            </ul>
+        </div>
+
+</footer>
+
+<script>
+(function () {
+    var mq = window.matchMedia('(max-width: 767px)');
+    document.querySelectorAll('.footer-col').forEach(function (col) {
+        var btns = col.querySelectorAll('.footer-col-title');
+        var lists = col.querySelectorAll('.footer-col-links');
+        btns.forEach(function (btn, i) {
+            var list = lists[i];
+            if (!btn || !list) return;
+            function syncAriaExpanded() {
+                if (mq.matches) {
+                    if (!btn.hasAttribute('aria-expanded')) {
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                } else {
+                    btn.removeAttribute('aria-expanded');
+                    list.classList.remove('open');
+                }
+            }
+            syncAriaExpanded();
+            mq.addEventListener('change', syncAriaExpanded);
+            btn.addEventListener('click', function () {
+                if (!mq.matches) return;
+                var expanded = btn.getAttribute('aria-expanded') === 'true';
+                btn.setAttribute('aria-expanded', String(!expanded));
+                list.classList.toggle('open', !expanded);
+            });
+        });
+    });
+}());
+</script>
+
+
+    
+    <script>
+      (function () {
+        var cfg = window.PYO_ANALYTICS || { appName: "scweb-ptr", pageCategory: "category_index" };
+        function push(event, extra) {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push(Object.assign({ event: event, appName: cfg.appName, page_category: cfg.pageCategory }, extra || {}));
+        }
+        push("page_view", { page_location: window.location.href, page_title: document.title, page_referrer: document.referrer });
+        document.addEventListener("click", function (e) {
+          var el = e.target && e.target.closest("[data-track]");
+          if (!el) return;
+          var extra = { page_section: el.getAttribute("data-section") || "" };
+          var anchor = el.tagName === "A" ? el : el.closest("a");
+          if (anchor) {
+            extra.link_url = anchor.href;
+            extra.link_text = anchor.textContent.trim() || anchor.getAttribute("aria-label") || "";
+          } else {
+            extra.link_text = el.textContent.trim() || el.getAttribute("aria-label") || "";
+          }
+          for (var i = 0; i < el.attributes.length; i++) {
+            var attr = el.attributes[i];
+            if (attr.name.indexOf("data-param-") === 0) { extra[attr.name.replace("data-param-", "")] = attr.value; }
+          }
+          push(el.getAttribute("data-track"), extra);
+        });
+      })();
+    </script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;06bb5a8e8d0b41cdabcd85fa88627d09&quot;,&quot;spa&quot;:2}" crossorigin="anonymous"></script>
+
+
+<tldx-lmi-shadow-root></tldx-lmi-shadow-root><div id="tldx-toast-container"></div><script type="text/javascript" id="" charset="">(function(){var a=document.querySelector(".merchant-layout[data-merchant-id]");if(a){var b=document.querySelector(".mlp-merchant-header__name"),c=document.querySelector(".mlp-merchant-header__domain");window.dataLayer=window.dataLayer||[];window.dataLayer.push({merchant_id:a.getAttribute("data-merchant-id"),merchant_name:b?b.textContent.trim():"",merchant_slug:c?c.textContent.trim().replace(/^https?:\/\//,"").replace(/\/$/,""):"",page_type:"merchant_page"})}})();</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(a){if(a=a.target.closest('.copy-coupon, [aria-label\x3d"Get deal"], .btn-get-deal')){var b=a.closest("section[id]"),f=b?b.id:void 0;if(f!=="reseller-codes"&&f!=="single-use-codes-section"){var g=document.querySelector('[data-component\x3d"mlp-v2-layout"][data-merchant-id]')||document.querySelector(".merchant-layout[data-merchant-id]"),d=a.closest("[data-card-index]");d=d?parseInt(d.getAttribute("data-card-index"),10)+1:void 0;if(!d){var c=a.closest('[data-deal-id], [data-component\x3d"deal-card"]');
+if(c&&b){b=b.querySelectorAll('[data-deal-id], [data-component\x3d"deal-card"]');for(var e=0;e<b.length;e++)if(b[e]===c){d=e+1;break}}}c=a.getAttribute("data-coupon-id")||"";c=c.replace(/^(cc|su|cd|cs)-/,"");dataLayer.push({event:"copy_code",pmc_pk:c?parseInt(c,10)||void 0:void 0,pmc_code:a.getAttribute("data-code")||void 0,pmc_merchant_id:g?parseInt(g.getAttribute("data-merchant-id"),10):void 0,pmc_merchant_name:a.getAttribute("data-merchant-name")||void 0,pmc_merchant_url:a.getAttribute("data-merchant-url")||
+void 0,pmc_coupon_title:a.getAttribute("data-title")||void 0,pmc_coupon_description:a.getAttribute("data-description")||void 0,page_section:f,pmc_card_order:d})}}},!0);</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(a){if(a=a.target.closest('.copy-coupon, [aria-label\x3d"Get deal"], .btn-get-deal, #savings_tips-section a[href]')){var b=a.closest("section[id]"),d=b?b.id:void 0;if(d==="best-deal-section"||d==="reseller-codes"||d==="single-use-codes-section"||d==="savings_tips-section"){var f=document.querySelector('[data-component\x3d"mlp-v2-layout"][data-merchant-id]')||document.querySelector(".merchant-layout[data-merchant-id]"),c=a.closest('[data-deal-id], [data-component\x3d"deal-card"], [data-testid\x3d"reseller-card"]');
+if(c&&b){b=b.querySelectorAll('[data-deal-id], [data-component\x3d"deal-card"], [data-testid\x3d"reseller-card"]');for(var e=0;e<b.length;e++)if(b[e]===c){var g=e+1;break}}c=a.getAttribute("data-coupon-id")||"";c=c.replace(/^(cc|rc|cd|su|cs)-/,"");dataLayer.push({event:"shop_click_to_merchant",pmc_pk:c?parseInt(c,10)||void 0:void 0,pmc_code:a.getAttribute("data-code")||void 0,pmc_merchant_id:f?parseInt(f.getAttribute("data-merchant-id"),10):void 0,pmc_merchant_name:a.getAttribute("data-merchant-name")||
+void 0,pmc_merchant_url:a.getAttribute("data-merchant-url")||a.getAttribute("href")||void 0,pmc_coupon_title:a.getAttribute("data-title")||void 0,pmc_coupon_description:a.getAttribute("data-description")||void 0,page_section:d,pmc_card_order:g})}}},!0);</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(b){if(b=b.target.closest("[data-vote]")){var c=b.closest("#sc-post-click-modal");if(c){var d=document.querySelector(".merchant-layout[data-merchant-id]"),a=document.getElementById("sc-modal-cta");a=a?a.getAttribute("href")||"":"";a=a.match(/\/promotion\/(\d+)/);var e=(document.querySelector(".btn-show-code[data-merchant-url]")||{}).getAttribute("data-merchant-url")||void 0,f=location.hash?location.hash.replace("#",""):void 0;dataLayer.push({event:"vote_code",
+pmc_pk:a?parseInt(a[1],10):void 0,pmc_code:c.dataset.code||void 0,pmc_merchant_id:d?parseInt(d.getAttribute("data-merchant-id"),10):void 0,pmc_merchant_url:e,pmc_coupon_title:(document.getElementById("sc-modal-title")||{}).textContent||void 0,pmc_coupon_description:(document.getElementById("sc-modal-subtitle")||{}).textContent||void 0,pmc_vote:b.getAttribute("data-vote")==="yes"?1:-1,pmc_card_order:window._pmc_card_order,page_section:window._pmc_section||f||"post_copy_click_modal"})}}},!0);</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(b){var a=b.target.closest(".btn-show-code");if(a)b=a.closest("[data-card-index]"),window._pmc_card_order=b?parseInt(b.getAttribute("data-card-index"),10)+1:void 0,b=a.getAttribute("data-coupon-id")||"",window._pmc_pk=b?parseInt(b.replace(/^(cc|su|cd|cs|rc)-/,""),10):void 0,a=a.closest("section[id]"),window._pmc_section=a?a.id:void 0,console.log("[PMC Capture]",window._pmc_section,window._pmc_pk,window._pmc_card_order);else if(a=b.target.closest("#sc-post-click-modal [data-vote]"))window._pmc_vote=
+a.getAttribute("data-vote")==="yes"?1:-1},!0);</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(a){if(a=a.target.closest('[data-gtm-selector\x3d"mcp-house-ad-vote"]')){a=document.getElementById("sc-post-click-modal");var b=document.querySelector(".merchant-layout[data-merchant-id]"),c=(document.querySelector(".btn-show-code[data-merchant-url]")||{}).getAttribute("data-merchant-url")||void 0,d=location.hash?location.hash.replace("#",""):void 0;dataLayer.push({event:"get_extension_click_after_vote",pmc_pk:window._pmc_pk,pmc_code:a?a.dataset.code:void 0,
+pmc_merchant_id:b?parseInt(b.getAttribute("data-merchant-id"),10):void 0,pmc_merchant_name:(document.querySelector(".btn-show-code[data-merchant-name]")||{}).getAttribute("data-merchant-name")||void 0,pmc_merchant_url:c,pmc_vote:window._pmc_vote,pmc_card_order:window._pmc_card_order,page_section:window._pmc_section||d||"post_copy_click_modal"})}},!0);</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(b){if(b=b.target.closest("#sc-modal-copy-btn")){b=document.getElementById("sc-post-click-modal");var c=document.querySelector(".merchant-layout[data-merchant-id]"),a=document.getElementById("sc-modal-cta");a=a?a.getAttribute("href")||"":"";a=a.match(/\/promotion\/(\d+)/);var d=(document.querySelector(".btn-show-code[data-merchant-url]")||{}).getAttribute("data-merchant-url")||void 0;dataLayer.push({event:"post_click_modal_copy_code",pmc_pk:a?parseInt(a[1],
+10):void 0,pmc_code:b?b.dataset.code:void 0,pmc_merchant_id:c?parseInt(c.getAttribute("data-merchant-id"),10):void 0,pmc_merchant_name:(document.querySelector(".btn-show-code[data-merchant-name]")||{}).getAttribute("data-merchant-name")||void 0,pmc_merchant_url:d,pmc_coupon_title:(document.getElementById("sc-modal-title")||{}).textContent||void 0,pmc_coupon_description:(document.getElementById("sc-modal-subtitle")||{}).textContent||void 0,page_section:window._pmc_section||sectionFromHash||"post_copy_click_modal",
+pmc_card_order:window._pmc_card_order})}},!0);</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(a){if(a=a.target.closest("#sc-modal-cta")){var c=document.getElementById("sc-post-click-modal"),d=document.querySelector('[data-component\x3d"mlp-v2-layout"][data-merchant-id]')||document.querySelector(".merchant-layout[data-merchant-id]"),b=a.getAttribute("href")||"";b=b.match(/\/promotion\/(\d+)/);var e=(document.querySelector(".btn-show-code[data-merchant-url]")||{}).getAttribute("data-merchant-url")||void 0,f=location.hash?location.hash.replace("#",""):
+void 0;dataLayer.push({event:"shop_click_to_merchant",pmc_pk:b?parseInt(b[1],10):void 0,pmc_code:c?c.dataset.code:void 0,pmc_merchant_id:d?parseInt(d.getAttribute("data-merchant-id"),10):void 0,pmc_merchant_name:(a.textContent||"").replace("Shop at ","").trim()||void 0,pmc_merchant_url:e,pmc_coupon_title:(document.getElementById("sc-modal-title")||{}).textContent||void 0,pmc_coupon_description:(document.getElementById("sc-modal-subtitle")||{}).textContent||void 0,pmc_card_order:window._pmc_card_order,
+page_section:window._pmc_section||f||"post_copy_click_modal"})}},!0);</script>
+<script type="text/javascript" id="" charset="">document.addEventListener("click",function(a){window.dataLayer=window.dataLayer||[];if(a=a.target.closest("a.ci-cat-l1")){var b=a.querySelector(".ci-cat-name");b=b?b.innerText.trim():a.innerText.trim();window.dataLayer.push({event:"top_category_click",link_text:b,link_url:a.href,page_section:"all_categories",category:b})}});</script></body>
